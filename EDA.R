@@ -137,7 +137,6 @@ LevelPlots(df_specific, df_specific$`Total Deaths`,"Total Deaths",df_specific$St
 LevelPlots(df_specific, df_specific$`Total Deaths`,"Total Deaths",df_specific$`Place of Death`)
 LevelPlots(df_specific, df_specific$`Total Deaths`,"Total Deaths",df_specific$`Age group`)
 
-
 # "Pneumonia Deaths"  
 LevelPlots(df_specific, df_specific$`Pneumonia Deaths`,"Pneumonia Deaths",df_specific$Group)
 LevelPlots(df_specific, df_specific$`Pneumonia Deaths`,"Pneumonia Deaths",df_specific$`HHS Region`)
