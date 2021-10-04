@@ -4,6 +4,9 @@ library(dplyr)
 library(ggplot2)
 library(lubridate)
 library(UsingR)
+library(ggcorrplot)
+library(usmap)
+
 
 df0 <- read_csv("Provisional_COVID-19_Deaths_by_Place_of_Death_and_Age.csv")
 
@@ -69,9 +72,17 @@ LevelPlots <- function(dataframe, variable, name_variable, Chosen_Factor) {
 
 }
 
+# 
+HistoPlots <- function(dataframe, variable, name_variable) {
+  
+  ggplot(data=dataframe, aes(variable)) + 
+    geom_histogram(breaks=seq(20, 50, by=2), 
+                   col="red", 
+                   aes(fill=..count..)) +
+    labs( title =name_variable )
+}
+
 #require(gridExtra)
-
-
 
 #######################################################################################################
 # Total deaths : 
@@ -81,6 +92,7 @@ LevelPlots(df, df$`Total Deaths`,"Total Deaths",df$State)
 LevelPlots(df, df$`Total Deaths`,"Total Deaths",df$`Place of Death`)
 LevelPlots(df, df$`Total Deaths`,"Total Deaths",df$`Age group`)
 
+HistoPlots(df, df$`Total Deaths`,"Total Deaths")
 
 # "Pneumonia Deaths"  
 LevelPlots(df, df$`Pneumonia Deaths`,"Pneumonia Deaths",df$Group)
@@ -89,7 +101,7 @@ LevelPlots(df, df$`Pneumonia Deaths`,"Pneumonia Deaths",df$State)
 LevelPlots(df, df$`Pneumonia Deaths`,"Pneumonia Deaths",df$`Place of Death`)
 LevelPlots(df, df$`Pneumonia Deaths`,"Pneumonia Deaths",df$`Age group`)
 
-
+HistoPlots(df, df$`Pneumonia Deaths`,"Pneumonia Deaths")
 # "Pneumonia and COVID-19 Deaths" 
 
 LevelPlots(df, df$`Pneumonia and COVID-19 Deaths`,"Pneumonia and COVID-19 Deaths",df$Group)
@@ -98,6 +110,7 @@ LevelPlots(df, df$`Pneumonia and COVID-19 Deaths`,"Pneumonia and COVID-19 Deaths
 LevelPlots(df, df$`Pneumonia and COVID-19 Deaths`,"Pneumonia and COVID-19 Deaths",df$`Place of Death`)
 LevelPlots(df, df$`Pneumonia and COVID-19 Deaths`,"Pneumonia and COVID-19 Deaths",df$`Age group`)
 
+HistoPlots(df, df$`Pneumonia and COVID-19 Deaths`,"Pneumonia and COVID-19 Deaths")
 # "Influenza Deaths"    
 LevelPlots(df, df$`Influenza Deaths`,"Influenza Deaths",df$Group)
 LevelPlots(df, df$`Influenza Deaths`,"Influenza Deaths",df$`HHS Region`)
@@ -105,14 +118,17 @@ LevelPlots(df, df$`Influenza Deaths`,"Influenza Deaths",df$State)
 LevelPlots(df, df$`Influenza Deaths`,"Influenza Deaths",df$`Place of Death`)
 LevelPlots(df, df$`Influenza Deaths`,"Influenza Deaths",df$`Age group`)
 
+HistoPlots(df, df$`Influenza Deaths`,"Influenza Deaths")
+
 # "Pneumonia, Influenza, or COVID-19 Deaths" 
 
-LevelPlots(df, df$`Pneumonia, Influenza, or COVID-19 Deathss`,"Pneumonia, Influenza, or COVID-19 Deathss",df$Group)
-LevelPlots(df, df$`Pneumonia, Influenza, or COVID-19 Deathss`,"Pneumonia, Influenza, or COVID-19 Deathss",df$`HHS Region`)
-LevelPlots(df, df$`Pneumonia, Influenza, or COVID-19 Deathss`,"Pneumonia, Influenza, or COVID-19 Deathss",df$State)
-LevelPlots(df, df$`Pneumonia, Influenza, or COVID-19 Deathss`,"Pneumonia, Influenza, or COVID-19 Deathss",df$`Place of Death`)
-LevelPlots(df, df$`Pneumonia, Influenza, or COVID-19 Deathss`,"Pneumonia, Influenza, or COVID-19 Deathss",df$`Age group`)
+LevelPlots(df, df$`Pneumonia, Influenza, or COVID-19 Deaths`,"Pneumonia, Influenza, or COVID-19 Deaths",df$Group)
+LevelPlots(df, df$`Pneumonia, Influenza, or COVID-19 Deaths`,"Pneumonia, Influenza, or COVID-19 Deaths",df$`HHS Region`)
+LevelPlots(df, df$`Pneumonia, Influenza, or COVID-19 Deaths`,"Pneumonia, Influenza, or COVID-19 Deaths",df$State)
+LevelPlots(df, df$`Pneumonia, Influenza, or COVID-19 Deaths`,"Pneumonia, Influenza, or COVID-19 Deaths",df$`Place of Death`)
+LevelPlots(df, df$`Pneumonia, Influenza, or COVID-19 Deaths`,"Pneumonia, Influenza, or COVID-19 Deaths",df$`Age group`)
 
+HistoPlots(df, df$`Pneumonia, Influenza, or COVID-19 Deaths`,"Pneumonia, Influenza, or COVID-19 Deaths")
 
 ####################################################################################################
 # trying to understand the start/end date part:
@@ -129,13 +145,19 @@ df_specific<- df %>% filter(`Age group` != "All Ages" & State != "United States"
 df_specific
 
 
-###
-# Total deaths : 
+### 
+# Total deaths :
+
+# scatter throuh time : 
 LevelPlots(df_specific, df_specific$`Total Deaths`,"Total Deaths",df_specific$Group)
 LevelPlots(df_specific, df_specific$`Total Deaths`,"Total Deaths",df_specific$`HHS Region`)
 LevelPlots(df_specific, df_specific$`Total Deaths`,"Total Deaths",df_specific$State)
 LevelPlots(df_specific, df_specific$`Total Deaths`,"Total Deaths",df_specific$`Place of Death`)
 LevelPlots(df_specific, df_specific$`Total Deaths`,"Total Deaths",df_specific$`Age group`)
+
+
+
+# Remarks:
 
 # "Pneumonia Deaths"  
 LevelPlots(df_specific, df_specific$`Pneumonia Deaths`,"Pneumonia Deaths",df_specific$Group)
@@ -167,6 +189,76 @@ LevelPlots(df_specific, df_specific$`Pneumonia, Influenza, or COVID-19 Deathss`,
 LevelPlots(df_specific, df_specific$`Pneumonia, Influenza, or COVID-19 Deathss`,"Pneumonia, Influenza, or COVID-19 Deathss",df_specific$State)
 LevelPlots(df_specific, df_specific$`Pneumonia, Influenza, or COVID-19 Deathss`,"Pneumonia, Influenza, or COVID-19 Deathss",df_specific$`Place of Death`)
 LevelPlots(df_specific, df_specific$`Pneumonia, Influenza, or COVID-19 Deathss`,"Pneumonia, Influenza, or COVID-19 Deathss",df_specific$`Age group`)
+
+# Remarks:
+
+
+
+####################################################################################################
+# Correlation Matrix:
+
+#cor(df_specific$`Pneumonia, Influenza, or COVID-19 Deathss`, method = c("pearson", "kendall", "spearman"))
+
+# model.matrix(~0+., data=df_specific) %>% 
+#   cor(use="pairwise.complete.obs") %>% 
+#   ggcorrplot(show.diag = F, type="lower", lab=TRUE, lab_size=2)
+
+#heatmap(df_specific)
+
+# DF<-df_specific
+# DF[] <- lapply(df_specific,as.integer)
+# library(sjPlot)
+# sjp.corr(DF)
+# sjt.corr(DF)
+
+
+
+
+####################################
+# geographic plots 
+
+list_states<-unique(df_specific$State)
+
+TotalDeath_by_state<-df_specific %>% 
+  group_by(State) %>% 
+  summarise(`Total Deaths`= sum(`Total Deaths`,na.rm=TRUE))
+
+PneumoniaDeath<-df_specific %>% 
+  group_by(State) %>% 
+  summarise(`Pneumonia Deaths`= sum(`Pneumonia Deaths`,na.rm=TRUE))
+
+PneumoniaCOVIDDeaths<-df_specific %>% 
+  group_by(State) %>% 
+  summarise(`Pneumonia and COVID-19 Deaths`= sum(`Pneumonia and COVID-19 Deaths`,na.rm=TRUE))
+
+InfluenzaDeaths<-df_specific %>% 
+  group_by(State) %>% 
+  summarise(`Influenza Deaths`= sum(`Influenza Deaths`,na.rm=TRUE))
+
+PneumoniaInfluenza_or_COVIDDeaths<-df_specific %>% 
+  group_by(State) %>% 
+  summarise(`Pneumonia, Influenza, or COVID-19 Deaths`= sum(`Pneumonia, Influenza, or COVID-19 Deaths`,na.rm=TRUE))
+
+PneumoniaInfluenza_or_COVIDDeaths
+
+us_popul<-statepop
+head(us_popul)
+help(plot_usmap)
+
+plot_usmap(data = statepop, values = "pop_2015", color = "red") + 
+  scale_fill_continuous(name = "Population (2015)", label = scales::comma) + 
+  theme(legend.position = "right")
+
+plot_usmap(data = PneumoniaInfluenza_or_COVIDDeaths, values = `Pneumonia, Influenza, or COVID-19 Deaths`, color = "red") + 
+  scale_fill_continuous(name = "deaths (2015)", label = scales::comma) + 
+  theme(legend.position = "right")
+
+
+df_by_state<-df_specific
+
+df_specific %>%
+  group_by(State) %>%
+  summarise(mean_delay = mean(dep_delay + arr_delay),n=n())
 
 
 
