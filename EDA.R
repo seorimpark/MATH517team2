@@ -239,26 +239,57 @@ PneumoniaInfluenza_or_COVIDDeaths<-df_specific %>%
   group_by(State) %>% 
   summarise(`Pneumonia, Influenza, or COVID-19 Deaths`= sum(`Pneumonia, Influenza, or COVID-19 Deaths`,na.rm=TRUE))
 
-PneumoniaInfluenza_or_COVIDDeaths
+# omitting for better view Newyork city and puerto rico 
+TotalDeath_by_state<-TotalDeath_by_state[-c(34,41),]
+PneumoniaDeath_by_state<-PneumoniaDeath[-c(34,41),]
+PneumoniaCOVIDDeaths_by_state<-PneumoniaCOVIDDeaths[-c(34,41),]
+InfluenzaDeaths_by_state<-InfluenzaDeaths[-c(34,41),]
+PneumoniaInfluenza_or_COVIDDeaths_by_state<-PneumoniaInfluenza_or_COVIDDeaths[-c(34,41),]
 
-us_popul<-statepop
-head(us_popul)
-help(plot_usmap)
+# all fine now:
+us_popul$full==PneumoniaInfluenza_or_COVIDDeaths_by_state$State
 
-plot_usmap(data = statepop, values = "pop_2015", color = "red") + 
-  scale_fill_continuous(name = "Population (2015)", label = scales::comma) + 
+# right datasets
+us_TotalDeath<-us_popul
+us_TotalDeath$pop_2015<-TotalDeath_by_state$`Total Deaths`
+
+us_PneumoniaDeath<-us_popul
+us_PneumoniaDeath$pop_2015<-PneumoniaCOVIDDeaths_by_state$`Pneumonia and COVID-19 Deaths`
+
+us_PneumoniaCOVIDDeaths<-us_popul
+us_PneumoniaCOVIDDeaths$pop_2015<-PneumoniaCOVIDDeaths_by_state$`Pneumonia and COVID-19 Deaths`
+
+us_InfluenzaDeaths<-us_popul
+us_InfluenzaDeaths$pop_2015<-InfluenzaDeaths_by_state$`Influenza Deaths`
+
+us_PneumoniaInfluenza_or_COVIDDeaths<-us_popul
+us_PneumoniaInfluenza_or_COVIDDeaths$pop_2015<-PneumoniaInfluenza_or_COVIDDeaths_by_state$`Pneumonia, Influenza, or COVID-19 Deaths`
+
+# plots
+
+plot_usmap(data = us_TotalDeath, values = "pop_2015", color = "red") + 
+  scale_fill_continuous(name = "us_TotalDeath", label = scales::comma) + 
   theme(legend.position = "right")
 
-plot_usmap(data = PneumoniaInfluenza_or_COVIDDeaths, values = `Pneumonia, Influenza, or COVID-19 Deaths`, color = "red") + 
-  scale_fill_continuous(name = "deaths (2015)", label = scales::comma) + 
+plot_usmap(data = us_PneumoniaDeath, values = "pop_2015", color = "red") + 
+  scale_fill_continuous(name = "us_PneumoniaDeath", label = scales::comma) + 
+  theme(legend.position = "right")
+
+plot_usmap(data = us_PneumoniaCOVIDDeaths, values = "pop_2015", color = "red") + 
+  scale_fill_continuous(name = "us_PneumoniaCOVIDDeaths)", label = scales::comma) + 
+  theme(legend.position = "right")
+
+plot_usmap(data = us_InfluenzaDeaths, values = "pop_2015", color = "red") + 
+  scale_fill_continuous(name = "us_InfluenzaDeaths", label = scales::comma) + 
+  theme(legend.position = "right")
+
+plot_usmap(data = us_PneumoniaInfluenza_or_COVIDDeaths, values = "pop_2015", color = "red") + 
+  scale_fill_continuous(name = "us_PneumoniaInfluenza_or_COVIDDeaths", label = scales::comma) + 
   theme(legend.position = "right")
 
 
-df_by_state<-df_specific
 
-df_specific %>%
-  group_by(State) %>%
-  summarise(mean_delay = mean(dep_delay + arr_delay),n=n())
+
 
 
 
