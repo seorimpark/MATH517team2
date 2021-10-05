@@ -28,3 +28,10 @@ ass
 a
 
 a
+
+
+frt<- function(cor)
+{
+  return (cor)
+  }
+
