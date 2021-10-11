@@ -1,0 +1,42 @@
+---
+title: "Statistical visualization and computation: COVID project"
+author: "Matias Janvin"
+date: "2021"
+# output: pdf_document
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Here, I am performing descriptive statistics on the cumulative incidences of death due to COVID 19 by different regions in Switzerland using the dataset from the federal institute of public health.
+
+https://www.covid19.admin.ch/en/overview?time=total
+
+## Overview of cumulative incidences of death ###
+We start by loading the data
+```{r}
+df <- read.csv("bag_covid_19_data_csv_11_October_2021/data/COVID19Death_geoRegion.csv")
+```
+
+
+Next, we plot the cumulative incidences for the different geographic categories
+```{r}
+regions<-unique(df$geoRegion)
+for(i in regions) {
+  region.df<-df[df$geoRegion==i,]
+  plot(as.Date(region.df$datum),region.df$sumTotal, 's', xaxt = "n", xlab='Month', ylab='Incidence of death',main=i)
+  axis.Date(1, at = seq(min(as.Date(region.df$datum)), max(as.Date(region.df$datum))+6, "months"),format='%m-%y')                 
+}
+```
+
+
+
+
+
+
+
+
+     
+     
