@@ -1,0 +1,62 @@
+---
+title: 'Statistical visualization and computation: COVID project'
+author: "Matias Janvin"
+date: '2021'
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+#knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+Here, I am performing descriptive statistics on the cumulative incidences of death due to COVID 19 by different regions in Switzerland using the dataset from the federal institute of public health.
+
+https://www.covid19.admin.ch/en/overview?time=total
+
+## Overview of cumulative incidences of death ###
+We start by loading the data
+```{r}
+df.death <- read.csv("bag_covid_19_data_csv_11_October_2021/data/COVID19Death_geoRegion.csv")
+df.cases <- read.csv("bag_covid_19_data_csv_11_October_2021/data/COVID19Cases_geoRegion.csv")
+df.hospital <- read.csv("bag_covid_19_data_csv_11_October_2021/data/COVID19Hosp_geoRegion.csv")
+
+```
+
+
+Next, we plot the cumulative incidences of death for the different geographic categories
+```{r}
+regions.death<-unique(df.death$geoRegion)
+for(i in regions.death) {
+  region.df.death<-df.death[df.death$geoRegion==i,]
+  plot(as.Date(region.df.death$datum),region.df.death$sumTotal, 's', xaxt = "n", xlab='Month', ylab='Incidence of death',main=i)
+  axis.Date(1, at = seq(min(as.Date(region.df.death$datum)), max(as.Date(region.df.death$datum))+6, "months"),format='%m-%y')                 
+}
+```
+
+Next, we plot the cumulative incidences of cases for the different geographic categories
+```{r}
+regions.cases<-unique(df.cases$geoRegion)
+for(i in regions.cases) {
+  region.df.cases<-df.cases[df.cases$geoRegion==i,]
+  plot(as.Date(region.df.cases$datum),region.df.cases$sumTotal, 's', xaxt = "n", xlab='Month', ylab='Incidence of cases',main=i)
+  axis.Date(1, at = seq(min(as.Date(region.df.cases$datum)), max(as.Date(region.df.cases$datum))+6, "months"),format='%m-%y')                 
+}
+```
+
+Furthermore, we plot the cumulative incidences of hospitalizations for the different geographic categories
+```{r}
+regions.hospital<-unique(df.hospital$geoRegion)
+for(i in regions.hospital) {
+  region.df.hospital<-df.hospital[df.hospital$geoRegion==i,]
+  plot(as.Date(region.df.hospital$datum),region.df.hospital$sumTotal, 's', xaxt = "n", xlab='Month', ylab='Incidence of hospitalizations',main=i)
+  axis.Date(1, at = seq(min(as.Date(region.df.hospital$datum)), max(as.Date(region.df.hospital$datum))+6, "months"),format='%m-%y')                 
+}
+```
+
+
+
+     
+     
