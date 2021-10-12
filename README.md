@@ -2,21 +2,18 @@
 Project on COVID-19:
 
 1) General
-  - The evolution of number of Deaths from COVID-19 in different states, the percentage of deaths from COVID-19 out of the total number of deaths in the U.S.
-  - Correlation between the number of deaths from COVID-19 and the age group, the place of deaths, and maybe see the impact of geographic distribution 
-  - Maybe work on the socio-economic effect of COVID-19.
+  - Correlation between between the number of Deaths other factors, such as the age, geographic distribution and et cetera (Fahim).
+  - Visualisation of cases through time on a us map (Zineb).
+  - Impact of Covid-19 on Economics (Selima).
 
-2) COVID-19 and other diseases
+2) COVID-19 and other diseases(Seorim)
   - COVID-19 and Pneumonia 
   - COVID-19 and Influenza
   - The influence of COVID-19 on the numbers deaths from other kind of diseases
 
-3) Focus:
-  - Correlation between between the number of Deaths other factors, such as the age, geographic distribution and et cetera (Fahim).
-  - Visualisation of cases through time on a us map (Zineb).
-  - Impact of Covid-19 on Economics (Selima).
-  -  
- 
+3) Swiss data on COVID-19
+  - Vaccinations : fairness of distribution and mortality, spatial distribution in Switzerland (Matias)
+
 We will first focus on the data on provisional COVID-19 deaths by place of death and age in the U.S:
 - https://data.cdc.gov/NCHS/Provisional-COVID-19-Deaths-by-Place-of-Death-and-/4va6-ph5s
 
