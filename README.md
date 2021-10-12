@@ -3,6 +3,7 @@ Project on COVID-19, correlation between the number of Deaths other factors, suc
 1) General
   - The evolution of number of Deaths from COVID-19 in different states, the percentage of deaths from COVID-19 out of the total number of deaths in the U.S.
   - Correlation between the number of deaths from COVID-19 and the age group, the place of deaths, and maybe see the impact of geographic distribution 
+  - Maybe work on the socio-economic effect of COVID-19.
 
 2) COVID-19 and other diseases
   - COVID-19 and Pneumonia 
