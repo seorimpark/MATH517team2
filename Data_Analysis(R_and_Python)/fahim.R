@@ -58,17 +58,16 @@ age = age[c(1,2,4,5,3)]
 colnames(age)
 dim(age)
 age = data.frame(age)
-age[,2:4]=age[,2:4]/age[,5]
 age = age[,1:4]
 age
 
 # Reshaping to use ggplot
 age = melt(age, id=c("Age.group"))
-names(age) = c("group", "cause", "death percentage")
+names(age) = c("group", "cause", "deaths")
 age
 
 # Barplot
-ggplot(data=age, aes(fill=cause, x=group, y=`death percentage`)) + 
+ggplot(data=age, aes(fill=cause, x=group, y=`deaths`)) + 
   geom_bar(position="dodge",stat="identity")
 
 
