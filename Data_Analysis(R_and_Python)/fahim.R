@@ -3,7 +3,7 @@ library(dplyr) # Useful for reading variables containing spaces
 library(ggplot2)
 library(reshape)
 
-data = read_csv("Provisional_COVID-19_Deaths_by_Place_of_Death_and_Age.csv")
+data = read_csv("C:/Users/Fahim Beck/Desktop/MATH517team2/Data/Provisional_COVID-19_Deaths_by_Place_of_Death_and_Age.csv")
 
 head(data)
 colnames(data)
@@ -54,7 +54,7 @@ age = subset(age, select=-c(`HHS Region`))
 # Changing columns order
 age = age[c(1,2,4,5,3)]
 
-# Converting to frame and getting percentage
+# Converting to frame and removing total deaths
 colnames(age)
 dim(age)
 age = data.frame(age)
@@ -143,21 +143,21 @@ plot_usmap(data=map, values="COVID.19.Deaths", labels=TRUE, exclude = "DC") +
   scale_fill_gradient(low="white", high="red", name = NULL) +
   ggtitle("Covid death rate (US, 2020-2021)") +
   theme(plot.title = element_text(size=20, hjust = 0.5)) +
-  theme(legend.position = c(0.2, -0.15),
+  theme(legend.position = c(0.2, -0.1),
         legend.direction = 'horizontal',
         legend.key.width = unit(0.8, "in"),
         legend.key.height = unit(0.4, "in"),
-        legend.text = element_text(size=15))
+        legend.text = element_text(size=12))
 
 # Plot Pneumonia
 plot_usmap(data=map, values="Pneumonia.Deaths", labels=TRUE, exclude = "DC") +
   scale_fill_gradient(low="white", high="red", name = NULL) +
   ggtitle("Pneumonia death rate (US, 2020-2021)") +
   theme(plot.title = element_text(size=20, hjust = 0.5)) +
-  theme(legend.position = c(0.2, -0.15),
+  theme(legend.position = c(0.2, -0.1),
         legend.direction = 'horizontal',
         legend.key.width = unit(0.8, "in"),
         legend.key.height = unit(0.4, "in"),
-        legend.text = element_text(size=15))
+        legend.text = element_text(size=12))
 
 
