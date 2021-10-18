@@ -1,0 +1,194 @@
+---
+title: "Covid project - Statistical computation and visualization"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data
+
+The first dataset we use is about [provisional COVID-19 deaths by place of death and age](https://data.cdc.gov/NCHS/Provisional-COVID-19-Deaths-by-Place-of-Death-and-/4va6-ph5s) from the CDC in the US.   
+
+*Some comments ...*
+
+## Packages
+
+Here are some packages used in our project. Make sure they are installed before running the R Markdown file. 
+
+````{r, message=FALSE}
+
+library(readr)
+library(dplyr) # Useful for reading variables containing spaces
+library(ggplot2)
+library(reshape)
+library(stringr) # Labels overlap
+library(scales) # Labels value format
+library(usmap)
+
+````
+
+## Risk factors 
+
+````{r, include=FALSE}
+
+data = read_csv("Provisional_COVID-19_Deaths_by_Place_of_Death_and_Age.csv")
+
+head(data)
+colnames(data)
+
+# Taking away useless variables
+data = data[,-c(1,2,3,5,6,14,16,17)]
+colnames(data)
+
+# Looking at values taken by certain variables
+unique(data$`Age group`)
+unique(data$State)
+unique(data$Group)
+unique(data$`Place of Death`)
+
+####### Comparing age and nb of deaths #######
+
+# Filtering, deleting and ordering columns
+age = filter(data, `Age group` != "All Ages" & State == "United States" 
+               & Group == "By Total" & `Place of Death` == "Total - All Places of Death") 
+
+# Verifying `HHS Region`==0 before deleting
+unique(age$`HHS Region`)
+
+# Taking only age group and covid deaths
+age = subset(age, select=c(`Age group`, `COVID-19 Deaths`))
+
+# Converting to frame
+colnames(age)
+dim(age)
+age = data.frame(age)
+age
+
+````
+
+### Age group
+
+Here are deaths per age group since the beginning of the pandemic.
+
+````{r, echo=FALSE}
+
+# Barplot
+ggplot(data=age, aes(x=Age.group, y=COVID.19.Deaths, fill=COVID.19.Deaths)) + 
+  geom_bar(stat="identity") +
+  scale_fill_gradient(low="cyan", high="blue", name = NULL) +
+  ggtitle("Covid deaths per age group") +
+  theme(plot.title = element_text(size=16, hjust = 0.5)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  labs(x = 'Age group', y = 'Covid deaths') +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 12)) +
+  scale_y_continuous(labels = format_format(big.mark = " ", decimal.mark = ",", 
+                                            scientific = FALSE))
+
+````
+
+Older people are those who died the most as expected. The same barplot is available by month in an interactive web app. You can access it by clicking [here](https://fahimbeck.shinyapps.io/barplot_app/). 
+
+### Place of death
+
+````{r, include=FALSE}
+
+####### Comparing places and causes #######
+
+# Filtering, deleting and ordering columns
+place = filter(data, `Age group` == "All Ages" & State == "United States" 
+             & Group == "By Total" & `Place of Death` != "Total - All Places of Death") 
+
+# Verifying `HHS Region`==0 before deleting
+unique(place$`HHS Region`)
+
+# Taking only age group and covid deaths
+place = subset(place, select=c(`Place of Death`, `COVID-19 Deaths`))
+
+# Converting to frame
+colnames(place)
+dim(place)
+place = data.frame(place)
+place
+
+````
+
+Here are deaths per place of death since the beginning of the pandemic.
+
+````{r, echo=FALSE}
+
+# Barplot
+ggplot(data=place, aes(x=reorder(Place.of.Death, COVID.19.Deaths), y=COVID.19.Deaths)) + 
+  geom_bar(stat="identity", fill='steelblue') +
+  coord_flip() +
+  ggtitle("Covid deaths per place of death") +
+  theme(plot.title = element_text(size=16, hjust = 0.5)) +
+  theme(axis.text.x = element_text(face="bold", color="black",size=8, angle=0),
+        axis.text.y = element_text(face="bold", color="black",size=8, angle=0)) + 
+  labs(x = NULL, y = 'Covid deaths') +  
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 25)) +
+  scale_y_continuous(labels = format_format(big.mark = " ", decimal.mark = ",", 
+                                            scientific = FALSE))
+
+````
+
+*Some comments ...*
+
+### Geographical location
+
+````{r, include=FALSE}
+
+####### US map #######
+
+# Filtering, deleting and ordering columns
+map = filter(data, `Age group` == "All Ages" & State != "United States" 
+               & Group == "By Total" & `Place of Death` == "Total - All Places of Death") 
+
+# Verifying `HHS Region`!=0 before deleting
+unique(map$`HHS Region`)
+
+# Taking only State, covid deaths and total deaths
+map = subset(map, select=c(State, `COVID-19 Deaths`, `Total Deaths`))
+head(map)
+
+# Removing 2 states to use usmap library
+map = map[map$State!="New York City" & map$State!="Puerto Rico",]
+
+# Converting to frame
+dim(map)
+map = data.frame(map)
+map = map[order(map$State),]
+
+# Adding extra columns to use usmap library
+map$fips = statepop$fips
+map$abbr = statepop$abbr
+
+# Taking percentage of deaths
+map[,2] = map[,2]/map[,3]
+
+# Verification
+map
+
+````
+
+Here are the ratio covid deaths / total deaths for each state of the US since the beginning of the pandemic.
+
+````{r, echo=FALSE}
+
+# Plot Covid
+plot_usmap(data=map, values="COVID.19.Deaths", labels=TRUE, exclude = "DC") +
+  scale_fill_gradient(low="white", high="red", name = NULL) +
+  ggtitle("Covid death ratio (US, 2020-2021)") +
+  theme(plot.title = element_text(size=20, hjust=0.5, vjust=-1)) +
+  theme(legend.position = c(0.5, 0),
+        legend.direction = 'horizontal',
+        legend.key.width = unit(0.8, "in"),
+        legend.key.height = unit(0.3, "in"),
+        legend.text = element_text(size=12))
+
+````
+
+*Some comments ...*
+
