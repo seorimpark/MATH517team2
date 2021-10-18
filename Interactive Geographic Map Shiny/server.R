@@ -1,11 +1,12 @@
 library(shiny)
 library(usmap)
 library(tidyverse)
+library(scales) 
 
 ################################################################################################################################################
 #loading the data###############################################################################################################################################
 
-df0<-read_csv("Interactive Geographic Map Shiny/Data_us.csv")
+df0<-read_csv("Data_us.csv")
 df1<- df0[,-c(1,17)]
 # transforming the columns start date and end date to date format:
 df3<-df1
@@ -224,8 +225,10 @@ shinyServer(
       #DataFrame, agegroup,place_d,group, m=0, y=0
         #randomVec <- rnorm(size, mean = as.numeric(input$mean), sd = as.numeric(input$sd))
         plot_usmap(data=dt, values = "pop_2015", color = "red") + 
-          scale_fill_continuous(name = "us corona deaths", label = scales::comma) + 
+          scale_fill_continuous(name = "us corona deaths", low="lightpink",high="Red",label = scales::comma) + 
           theme(legend.position = "right")
+        
+    
       
       
       
