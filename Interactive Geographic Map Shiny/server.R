@@ -1,10 +1,11 @@
 library(shiny)
 library(usmap)
+library(tidyverse)
 
 ################################################################################################################################################
 #loading the data###############################################################################################################################################
 
-df0<-read_csv("Data_us.csv")
+df0<-read_csv("Interactive Geographic Map Shiny/Data_us.csv")
 df1<- df0[,-c(1,17)]
 # transforming the columns start date and end date to date format:
 df3<-df1
