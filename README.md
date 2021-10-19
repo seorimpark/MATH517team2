@@ -25,19 +25,19 @@
 ## Report outline:
 
 1) Introduction
-  a) Introduction (Selima)
-  b) Questions (Matias)
-  c) Approaches (Zineb)
+  - Introduction (Selima)
+  - Questions (Matias)
+  - Approaches (Zineb)
 2) Data description.
-  a) US deaths within categories and states. (Fahim)
-  b) US cases within states. (Seorim)
-  c) Additional: US population, .. (Seorim)
+  - US deaths within categories and states. (Fahim)
+  - US cases within states. (Seorim)
+  - Additional: US population, .. (Seorim)
 3) How is the number of deaths from COVID-19 in the U.S. evolving through time? (Zineb)
 4) What are the main risk factors of deaths from COVID-19? What are the most dangerous conditions? (Fahim)
 5) How did the mortality rate evolve through time? ( Selima)
 6) Does the geolocation of the state have an impact on the number of cases and the number of deaths from COVID-19?
-  a) Correlations depending neighboorship. (Seorim)
-  b) Correlations depending of degrees of separation. (Matias)
+  - Correlations depending neighboorship. (Seorim)
+  - Correlations depending of degrees of separation. (Matias)
 7) Conclusion.
 8) Possible improvements.
 
