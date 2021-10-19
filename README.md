@@ -1,28 +1,30 @@
 # MATH517team2
-Project on COVID-19:
+## Project1:
+### Project on COVID-19:
+1) How is the number of deaths from COVID-19 in the U.S. evolving through time?
+  - Visualisation and interactive map of the U.S. with the number of deaths from COVID-19 by states and by time (Zineb) (1)
+2) What are the main risk factors of deaths from COVID-19? What are the most dangerous conditions?
+  - Interactive bar plots with different conditions from different risk factors, and several plots in regards to this subject (Fahim) (1)
+3) How did the mortality rate evolve through time? 
+  - Plots on the mortality rate through time, and with respect to different risk factors (Salima) (2) (4) (5)
+4) Does the geolocation of the state have an impact on the number of cases and the number of deaths from COVID-19?
+  - Interactive plot on the comparison of the numbers betweens two States (Seorim) (2) (3) 
+5) How great is the impact of vaccination on the mortality rate of COVID-19?
+  - Plots on the evolution of mortality rate with respect to the vaccination (Matias) (?)
 
-1) General
-  - Correlation between between the number of Deaths other factors, such as the age, geographic distribution and et cetera (Fahim).
-  - Visualisation of cases through time on a us map (Zineb).
-  - Impact of Covid-19 on Economics (Selima).
-
-2) COVID-19 and other diseases(Seorim)
-  - COVID-19 and Pneumonia 
-  - COVID-19 and Influenza
-  - The influence of COVID-19 on the numbers deaths from other kind of diseases
-
-3) Swiss data on COVID-19
-  - Vaccinations : fairness of distribution and mortality, spatial distribution in Switzerland (Matias)
-
-We will first focus on the data on provisional COVID-19 deaths by place of death and age in the U.S:
-- https://data.cdc.gov/NCHS/Provisional-COVID-19-Deaths-by-Place-of-Death-and-/4va6-ph5s
+### Data that has been used:
+- Provisional_COVID-19_Deaths_by_Place_of_Death_and_Age.csv (source:https://data.cdc.gov/NCHS/Provisional-COVID-19-Deaths-by-Place-of-Death-and-/4va6-ph5s) (1)
+- United_States_COVID-19_Cases_and_Deaths_by_State_over_Time.csv (source: https://data.cdc.gov/Case-Surveillance/United-States-COVID-19-Cases-and-Deaths-by-State-o/9mfq-cb36) (2)
+- tot_population.csv (extracted part of the data from https://www.census.gov/data/datasets/time-series/demo/popest/2010s-national-total.html#par_textimage_1810472256) (3)
+- Cases_per_age_group.csv (source: https://covid.cdc.gov/covid-data-tracker/#demographics) (4)
+- case_per_month (dataset created from United_States_COVID-19_Cases_and_Deaths_by_State_over_Time.csv) (5)
 
 (Data on Swiss COVID-19, not for now: 
 - https://www.covid19.admin.ch/en/overview?time=total
 - https://github.com/openZH/covid_19
 - https://opendata.swiss/en/dataset/covid-19-schweiz)
 
-List of members:
+## List of members:
 - Zineb Agnaou (ZinebAg)
 - Fahim Beck (FahimBeck)
 - Matias Janvin (matiasjanvin)
