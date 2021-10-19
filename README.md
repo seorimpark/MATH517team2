@@ -9,9 +9,7 @@
   - Plots on the mortality rate through time, and with respect to different risk factors (Salima) (2) (4) (5)
 4) Does the geolocation of the state have an impact on the number of cases and the number of deaths from COVID-19?
   - Interactive plot on the comparison of the numbers betweens two States (Seorim) (2) (3) 
-5) How great is the impact of vaccination on the mortality rate of COVID-19?
-  - Plots on the evolution of mortality rate with respect to the vaccination (Matias) (?)
-
+  - Separation analysis: correlation across different degrees of separation. (Mathias) (2) (3)
 ### Data that has been used:
 - Provisional_COVID-19_Deaths_by_Place_of_Death_and_Age.csv (source:https://data.cdc.gov/NCHS/Provisional-COVID-19-Deaths-by-Place-of-Death-and-/4va6-ph5s) (1)
 - United_States_COVID-19_Cases_and_Deaths_by_State_over_Time.csv (source: https://data.cdc.gov/Case-Surveillance/United-States-COVID-19-Cases-and-Deaths-by-State-o/9mfq-cb36) (2)
