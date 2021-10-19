@@ -22,6 +22,15 @@
 - https://github.com/openZH/covid_19
 - https://opendata.swiss/en/dataset/covid-19-schweiz)
 
+## Report outline:
+-A clear statement of the goal of the mini-project (in short sentence(s) and most preferably in the form of (a) question(s) you intend to answer).
+-A brief summary of the approach you have followed to achieve your goal. 
+-A brief introduction to the problem (what has been done before in this context, why is the problem you are tackling relevant, etc...).
+-Comprehensive descriptive analysis of the data (which variables you have available, are they continuous, discrete?, etc...).
+-Comprehensive presentation of results (which statistical models/techniques have you used -if any- and why they were adequate to tackle your problem with the data you had).
+-Conclusions and discussion.
+-Possible future work.
+
 ## List of members:
 - Zineb Agnaou (ZinebAg)
 - Fahim Beck (FahimBeck)
