@@ -1,0 +1,62 @@
+---
+title: "d-separation_analysis"
+author: "Matias Janvin"
+date: "10/21/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library(dplyr) 
+library(ggplot2)
+library(reshape)
+```
+
+## Loading the data
+
+```{r}
+df <- read_csv("Provisional_COVID-19_Deaths_by_Place_of_Death_and_Age.csv")
+```
+
+## Filtering the data
+
+```{r}
+test9<-
+head(test9)
+
+states<-setdiff(unique(df$State),"United States" )
+
+df.deaths <-  data.frame(rep(0,21))
+for(i in states) {
+
+new.cases<-filter(df,Group=='By Month',State==i,`Place of Death`=='Total - All Places of Death',`Age group`=='All Ages')
+
+
+df.deaths[,which(states == i)]<-new.cases$`COVID-19 Deaths`
+
+# Checking that the total cases matches the sum of new cases
+c1<-sum(new.cases$`COVID-19 Deaths`, na.rm = TRUE)
+total<-filter(df,Group=="By Total",State==i,`Place of Death`=='Total - All Places of Death',`Age group`=='All Ages')
+c2 <- total$`COVID-19 Deaths`
+
+
+plot(as.Date(new.cases$`End Date`, "%m/%d/%Y"),new.cases$`COVID-19 Deaths`, 'h', xaxt = "n", xlab='Month', ylab='Montly new cases of death',main=paste(i,paste('TOT1 =',as.character(c1)), paste('TOT2 =', as.character(c2)), sep=', '))
+  axis.Date(1, at = seq(min(as.Date(new.cases$`End Date`, "%m/%d/%Y")), max(as.Date(new.cases$`End Date`, "%m/%d/%Y"))+6, "months"),format='%m-%y') 
+  
+}
+
+colnames(df.deaths)<- c(states)
+
+```
+
+
+# Computing the correlations: preliminary plots
+```{r}
+
+plot(df.deaths$Alabama,df.deaths$Alaska,'p')
+
+```
+
+
+
