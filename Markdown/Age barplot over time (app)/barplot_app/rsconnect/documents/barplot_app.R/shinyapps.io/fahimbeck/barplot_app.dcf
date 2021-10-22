@@ -5,9 +5,9 @@ account: fahimbeck
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 4890257
-bundleId: 5147669
+bundleId: 5164280
 url: https://fahimbeck.shinyapps.io/barplot_app/
-when: 1634495518.61187
-lastSyncTime: 1634495518.61187
+when: 1634854611.02248
+lastSyncTime: 1634854611.02248
 asMultiple: FALSE
 asStatic: FALSE

@@ -1,0 +1,207 @@
+---
+title: "COVID--19 : Study about mortality in the US"
+description: |
+  Statistical computation and visualization (MATH-517)
+date: October 26, 2021
+author:
+- name: "Zineb AGNAOU"  
+  url: https://github.com/ZinebAg
+- name: "Fahim BECK"
+  url: https://github.com/FahimBeck
+- name: "Salima JAOUA"
+  url: https://github.com/salimajaoua
+- name: "Matias JANVIN"
+  url: https://github.com/matiasjanvin
+- name: "Seorim PARK"
+  url: https://github.com/seorimparkk
+output: distill::distill_article
+---
+<style>
+body {text-align: justify}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+*Salima*  
+
+*Matias*  
+
+*Zineb*  
+
+
+## Data
+
+In this project, several datasets were used to answer our questions. Each one of them refers to the same population (the US). Here are more specific descriptions. 
+
+### US deaths within categories and states
+
+The first dataset we use is about [provisional COVID--19 deaths by place of death and age](https://data.cdc.gov/NCHS/Provisional-COVID-19-Deaths-by-Place-of-Death-and-/4va6-ph5s) from the CDC in the US. A complete description of it is available on the web page. 
+
+The variables we used in this project are : `Group`, `Year`, `Month`,	`HHS Region`,	`State`,	`Place of Death`, `Age group`, `COVID-19 Deaths` and `Total Deaths`. What is particular here is that the sum of `COVID-19 Deaths` is not the total number of deaths in the US. Actually, we need to filter our data by `Group`, `State`, `Place of Death` and `Age Group` in order to get what we want.
+
+A last thing we should take into account is that those numbers of deaths are not the exact number that happened during a given period. The reason is that there is always a lag in time (usually 1 to 8 weeks) between the instant when the death occurred and between when the death certificate is completed and submitted for reporting purposes. 
+
+### US deaths within categories and states
+
+*Seorim*  
+
+### Additional: US population, ...
+
+*Seorim*  
+
+## Packages
+
+Here are some packages used in our project. Make sure they are installed before running the R Markdown file. Since the format of this Markdown is not standard, you need to install the *Distill* package. Instructions can be found on [Github](https://github.com/rstudio/distill).
+
+````{r, message=FALSE}
+
+library(readr)
+library(dplyr) # Useful for reading variables containing spaces
+library(ggplot2)
+library(reshape)
+library(stringr) # Labels overlap
+library(scales) # Labels value format
+library(usmap)
+
+````
+
+## Deaths through time in the US
+
+*Zineb*  
+
+## Risk factors 
+
+In this section, we will have a closer look at the risk factors of death from COVID--19. More particularly, we will first consider age and second the place where death occured.  
+
+````{r, include=FALSE}
+
+data = read_csv("Data/Provisional_COVID-19_Deaths_by_Place_of_Death_and_Age.csv")
+
+head(data)
+colnames(data)
+
+# Taking away useless variables
+data = data[,-c(1,2,3,5,6,14,16,17)]
+colnames(data)
+
+# Looking at values taken by certain variables
+unique(data$`Age group`)
+unique(data$State)
+unique(data$Group)
+unique(data$`Place of Death`)
+
+####### Comparing age and nb of deaths #######
+
+# Filtering, deleting and ordering columns
+age = filter(data, `Age group` != "All Ages" & State == "United States" 
+               & Group == "By Total" & `Place of Death` == "Total - All Places of Death") 
+
+# Verifying `HHS Region`==0 before deleting
+unique(age$`HHS Region`)
+
+# Taking only age group and covid deaths
+age = subset(age, select=c(`Age group`, `COVID-19 Deaths`))
+
+# Converting to frame
+colnames(age)
+dim(age)
+age = data.frame(age)
+age
+
+````
+
+### Age group
+
+Here are deaths per age group since the beginning of the pandemic.
+
+````{r, echo=FALSE}
+
+# Barplot
+ggplot(data=age, aes(x=Age.group, y=COVID.19.Deaths, fill=COVID.19.Deaths)) + 
+  geom_bar(stat="identity") +
+  scale_fill_gradient(low="cyan", high="blue", name = NULL) +
+  ggtitle("Covid deaths per age group") +
+  theme(plot.title = element_text(size=16, hjust = 0.5)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  labs(x = 'Age group', y = 'Deaths') +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 12)) +
+  scale_y_continuous(labels = format_format(big.mark = " ", decimal.mark = ",", 
+                                            scientific = FALSE))
+
+````
+
+Older people are those who died the most as expected. The same barplot is available by month in an interactive web app. You can access it by clicking [here](https://fahimbeck.shinyapps.io/barplot_app/). By moving the slider, we are always able to observe a right-increase tendency on the barplots. We are also able to identify each wave. 
+
+### Place of death
+
+````{r, include=FALSE}
+
+####### Comparing places and causes #######
+
+# Filtering, deleting and ordering columns
+place = filter(data, `Age group` == "All Ages" & State == "United States" 
+             & Group == "By Total" & `Place of Death` != "Total - All Places of Death") 
+
+# Verifying `HHS Region`==0 before deleting
+unique(place$`HHS Region`)
+
+# Taking only age group and covid deaths
+place = subset(place, select=c(`Place of Death`, `COVID-19 Deaths`))
+
+# Converting to frame
+colnames(place)
+dim(place)
+place = data.frame(place)
+place
+
+````
+
+Here are deaths per place of death since the beginning of the pandemic.
+
+````{r, echo=FALSE}
+
+# Barplot
+ggplot(data=place, aes(x=reorder(Place.of.Death, COVID.19.Deaths), y=COVID.19.Deaths)) + 
+  geom_bar(stat="identity", fill='steelblue') +
+  coord_flip() +
+  ggtitle("Covid deaths per place of death") +
+  theme(plot.title = element_text(size=16, hjust = 0.5)) +
+  theme(axis.text.x = element_text(face="bold", color="black",size=8, angle=0),
+        axis.text.y = element_text(face="bold", color="black",size=8, angle=0)) + 
+  labs(x = NULL, y = 'deaths') +  
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 25)) +
+  scale_y_continuous(labels = format_format(big.mark = " ", decimal.mark = ",", 
+                                            scientific = FALSE))
+
+````
+
+Here we can clearly see that most people were inpatients in a healthcare setting before dying. This includes ICUs and reflects our expectations. Then, people in nursing homes died also a lot as expected (older people being at risk), but much less than the previous category. 
+
+## Mortality rate through time 
+
+*Salima*
+
+## Impact of geolocation on cases and deaths from COVID--19
+
+### Correlations depending of neighboorship
+
+*Seorim*
+
+### Correlations depending of degrees of separation
+
+*Matias*
+
+## Conclusion 
+
+*pending*
+
+## Future improvements 
+
+*pending*
+
+
+

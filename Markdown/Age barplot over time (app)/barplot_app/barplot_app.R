@@ -1,5 +1,6 @@
 
 library(shiny)
+library(shinyWidgets)
 library(readr)
 library(dplyr) # Useful for reading variables containing spaces
 library(ggplot2)
@@ -62,8 +63,7 @@ ui <- fluidPage(
     HTML("<br>"),
     
     # Instructions
-    "Select year and month. You will get an error if month is greater than 9 
-    when year 2021 is selected.",
+    "Select year and month. Data cover the period from January 2020 till September 2021.",
     
     # Vertical space
     HTML("<br><br>"),
@@ -74,19 +74,29 @@ ui <- fluidPage(
           selectInput("year", label = "Year :",
                       choices = c(2020, 2021), selected = 2021),
           sliderInput("month", label = "Month :",
-                      min = 1, max = 12, value = 9, step = 1)
-        ),
+                      min = 1, max = 9, value = 9, step = 1)
+          ),
 
         # Show a plot of the generated distribution
         mainPanel(
            plotOutput("Barplot")
         )
-    )
-)
+      )
+   )
+
 
 # Define server logic required to draw a histogram
-server <- function(input, output) {
-
+server <- function(session, input, output) {
+    
+    # Update months slider according to year
+    observe({
+      if (input$year==2020){
+        updateSliderInput(session, "month", label = "Month :", min = 1, max = 12, step = 1)
+        } else {
+          updateSliderInput(session, "month", label = "Month :", min = 1, max = 9, step = 1)
+          }
+      })
+  
     output$Barplot <- renderPlot({
       
       # Filtering
