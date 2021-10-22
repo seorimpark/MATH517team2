@@ -17,23 +17,84 @@ library(reshape)
 
 ```{r}
 df <- read_csv("Provisional_COVID-19_Deaths_by_Place_of_Death_and_Age.csv")
+tot_population <- read.csv("tot_population.csv")
+tot_population$Population<-as.numeric(gsub(" ", "", tot_population$Population)) # Converting numbers to numeric format
 ```
+
+
+
+## Construct dictionary of neighboring states for each state
+source from: https://state.1keydata.com/bordering-states-list.php
+We assume that water borders and land borders have no difference
+
+```{r}
+
+neigh=list(
+    "Alabama"=c('Florida', 'Georgia', 'Mississippi', 'Tennessee'),
+    "Arizona"=c('California', 'Colorado', 'Nevada', 'New Mexico', 'Utah'),
+    "Arkansas"=c('Louisiana', 'Mississippi', 'Missouri', 'Oklahoma', 'Tennessee', 'Texas'),
+    "California"=c('Arizona', 'Nevada', 'Oregon'),
+    "Colorado"=c('Arizona', 'Kansas', 'Nebraska', 'New Mexico', 'Oklahoma', 'Utah', 'Wyoming'),
+    "Connecticut"=c('Massachusetts', 'New York', 'Rhode Island'),
+    "Delaware"=c('Maryland', 'New Jersey', 'Pennsylvania'),
+    "Florida"=c('Alabama', 'Georgia'),
+    "Georgia"=c('Alabama', 'Florida', 'North Carolina', 'South Carolina', 'Tennessee'),
+    "Idaho"=c('Montana', 'Nevada', 'Oregon', 'Utah', 'Washington', 'Wyoming'),
+    "Illinois"=c('Indiana', 'Iowa', 'Michigan', 'Kentucky', 'Missouri', 'Wisconsin'),
+    "Indiana"=c('Illinois', 'Kentucky', 'Michigan', 'Ohio'),
+    "Iowa"=c('Illinois', 'Minnesota', 'Missouri', 'Nebraska', 'South Dakota', 'Wisconsin'),
+    "Kansas"=c('Colorado', 'Missouri', 'Nebraska', 'Oklahoma'),
+    "Kentucky"=c('Illinois', 'Indiana', 'Missouri', 'Ohio', 'Tennessee', 'Virginia', 'West Virginia'),
+    "Louisiana"=c('Arkansas', 'Mississippi', 'Texas'),
+    "Maine"=c('New Hampshire'),
+    "Maryland"=c('Delaware', 'Pennsylvania', 'Virginia', 'West Virginia'),
+    "Massachusetts"=c('Connecticut', 'New Hampshire', 'New York', 'Rhode Island', 'Vermont'),
+    "Michigan"=c('Illinois', 'Indiana', 'Minnesota', 'Ohio', 'Wisconsin'),
+    "Minnesota"=c('Iowa', 'Michigan', 'North Dakota', 'South Dakota', 'Wisconsin'),
+    "Mississippi"=c('Alabama', 'Arkanssas', 'Louisiana', 'Tennessee'),
+    "Missouri"=c('Arkansas', 'Illinois', 'Iowa', 'Kansas', 'Kentucky', 'Nebraska', 'Oklahoma', 'Tennessee'),
+    "Montana"=c('Idaho', 'North Dakota', 'South Dakota', 'Wyoming'),
+    "Nebraska"=c('Colorado', 'Iowa', 'Kansas', 'Missouri', 'South Dakota', 'Wyoming'),
+    "Nevada"=c('Arizona', 'California', 'Idaho', 'Oregon', 'Utah'),
+    "New Hampshire"=c('Maine', 'Massachusetts', 'Vermont'),
+    "New Jersey"=c('Delaware', 'New York', 'Pennsylvania'),
+    "New Mexico"=c('Arizona', 'Colorado', 'Oklahoma', 'Texas', 'Utah'),
+    "New York"=c('Connecticut', 'Massachusetts', 'New Jersey', 'Pennsylvania', 'Rhode Island', 'Vermont'),
+    "North Carolina"=c('Georgia', 'South Carolina', 'Tennessee', 'Virginia'),
+    "North Dakota"=c('Minnesota', 'Montana', 'South Dakota'),
+    "Ohio"=c('Indiana', 'Kentucky', 'Michigan', 'Pennsylvania', 'West Virginia'),
+    "Oklahoma"=c('Arkansas', 'Colorado', 'Kansas', 'Missouri', 'New Mexico', 'Texas'),
+    "Oregon"=c('California', 'Idaho', 'Nevada', 'Washington'),
+    "Pennsylvania"=c('Delaware', 'Maryland', 'New Jersey', 'New York', 'Ohio', 'West Virginia'),
+    "Rhode Island"=c('Connecticut', 'Massachusetts', 'New York'),
+    "South Carolina"=c('Georgia', 'North Carolina'),
+    "South Dakota"=c('Iowa', 'Minnesota', 'Montana', 'Nebraska', 'North Dakota', 'Wyoming'),
+    "Tennessee"=c('Alabama', 'Arkansas', 'Georgia', 'Kentucky', 'Mississippi', 'Missouri', 'North Carolina', 'Virginia'),
+    "Texas"=c('Arkansas', 'Louisiana', 'New Mexico', 'Oklahoma'),
+    "Utah"=c('Arizona', 'Colorado', 'Idaho', 'Nevada', 'New Mexico', 'Wyoming'),
+    "Vermont"=c('Massachusetts', 'New Hampshire', 'New York'),
+    "Virginia"=c('Kentucky', 'Maryland', 'North Carolina', 'Tennessee', 'West Virginia'),
+    "Washington"=c('Idaho', 'Oregon'),
+    "West Virginia"=c('Kentucky', 'Maryland', 'Ohio', 'Pennsylvania', 'Virginia'),
+    "Wisconsin"=c('Illinois', 'Iowa', 'Michigan', 'Minnesota'),
+    "Wyoming"=c('Colorado', 'Idaho', 'Montana', 'Nebraska', 'South Dakota', 'Utah')
+    )
+
+# Constructing an adjacency matrix
+```
+
 
 ## Filtering the data
 
 ```{r}
-test9<-
-head(test9)
 
-states<-setdiff(unique(df$State),"United States" )
-
+states<-setdiff(unique(df$State),c("United States","New York City","District of Columbia", "Puerto Rico", "Alaska")  )
 df.deaths <-  data.frame(rep(0,21))
 for(i in states) {
 
 new.cases<-filter(df,Group=='By Month',State==i,`Place of Death`=='Total - All Places of Death',`Age group`=='All Ages')
 
-
-df.deaths[,which(states == i)]<-new.cases$`COVID-19 Deaths`
+df.deaths[,which(states == i)]<-new.cases$`COVID-19 Deaths`*100000/tot_population[tot_population[,1]==state.abb[match(i,state.name)],2]
 
 # Checking that the total cases matches the sum of new cases
 c1<-sum(new.cases$`COVID-19 Deaths`, na.rm = TRUE)
@@ -51,12 +112,48 @@ colnames(df.deaths)<- c(states)
 ```
 
 
-# Computing the correlations: preliminary plots
+# Predictions for Wyoming
 ```{r}
+i<-'Wyoming'
+j<-'Alabama'
 
-plot(df.deaths$Alabama,df.deaths$Alaska,'p')
+# Predicting Wyoming for Alabama
+x<-df.deaths[,j]
+y<-df.deaths[,i]
+plot(x,y,'p',main=paste(i,j,sep = ', '))
+lm(y ~ x)
+
+# Wyoming from all other states
+stacked<-stack(df.deaths)
+y1<-rep(stacked[stacked$ind==i,1],ncol(df.deaths)-1)
+x1<-stacked[stacked$ind!=i,1]
+plot(x1,y1,'p', main=i)
+
+lm(y1 ~ x1)
+
+
 
 ```
+
+
+
+
+```{r}
+# Predicting Wyoming from its neigbours
+cols<-match(unlist(neigh[i]),states) # Only stacking columns corresponding to neighbours
+stacked<-stack(df.deaths[,cols])
+y1<-rep(df.deaths[,i],length(cols))
+x1<-stacked[,1]
+plot(x1,y1,'p',main=i)
+lm(y1 ~ x1)
+```
+
+The cofficient for x1 is larger for neighbours of Wyoming compared to using all other states. This suggests that neighbours give a better prediction of the cases.
+
+
+
+
+
 
 
 
