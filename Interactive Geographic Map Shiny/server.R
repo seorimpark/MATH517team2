@@ -5,7 +5,7 @@ library(scales)
 
 ################################################################################################################################################
 #loading the data###############################################################################################################################################
-
+#setwd("~/Desktop/SCV/SCV_project/HW1/MATH517team2/MATH517team2/Interactive Geographic Map Shiny")
 df0<-read_csv("Data_us.csv")
 df1<- df0[,-c(1,17)]
 # transforming the columns start date and end date to date format:
@@ -104,19 +104,6 @@ Select_PlaceDeath<-function(DataFrame, place_d)
   }
 }
 
-# Select_all<-function(DataFrame, agegroup,group,region,state,place_d)
-# {
-#   # I want to use %>% but not quite confortable, I ll use brute force first:
-#   df1=Select_Age_Group(DataFrame,agegroup)
-#   df2= Select_Group(df1,group)
-#   df3=Select_HHSRegion(df2, region)
-#   df4=Select_State(df3,state)
-#   df5=Select_PlaceDeath(df4,place_d)
-#   df5<-as.data.frame(df5)
-#   return(df5)
-# }
-
-
 Select_all<-function(DataFrame, agegroup,place_d,group, m, y)
 {
   # I want to use %>% but not quite confortable, I ll use brute force first:
@@ -148,25 +135,13 @@ us_popul<-statepop
 
 standardise_pop<-function(data)
 {
-  data[,2]=data[,2]*100000/us_popul$pop_2015
+  data[,2]=data[,2]*1000000/us_popul$pop_2015
   data<-as.data.frame(data)
   return(data)
 }
 
 
 ################################################################################################################################################
-
-
-################################################################################################################################################
-#Plot_map<-function(data = df)###############################################################################################################################################
-# Plot_map<-function(data = df) {
-#     #df1=as.data.frame(df)
-#     plot_usmap(data=df1, values = "pop_2015", color = "red") + 
-#     scale_fill_continuous(name = "us corona deaths", label = scales::comma) + 
-#     theme(legend.position = "right")}
-################################################################################################################################################
-
-
 ################################################################################################################################################
 #data_to_plot<-function(DataFrame, agegroup)################################################################################################################################################
 data_to_plot<-function(DataFrame, agegroup,place_d,group, m, y){
@@ -210,27 +185,47 @@ shinyServer(
       output$myPlot <- renderPlot({
       distType_age <- input$AgeGroup
       distType_placeofdeath <- input$PlaceD
-      distGroup<- input$Group
+      # distGroup<- input$Group
+      # distMonth<-0
+      # distYear<-0
+      # if(distGroup == "By Year")
+      # {distYear<-input$Year}
+      # else if(distGroup == "By Month")
+      # {distYear<-input$Year
+      #  distMonth<-Month_to_number(input$Month)}
+      ###
+      distGroup<- input$Group  # so it would be total, 2020, or 2021
       distMonth<-0
       distYear<-0
-      if(distGroup == "By Year")
-      {distYear<-input$Year}
-      else if(distGroup == "By Month")
-      {distYear<-input$Year
-       distMonth<-Month_to_number(input$Month)}
-      
-      
+      if (distGroup == "2020")
+      {
+        distYear<-2020
+        distGroup<-"By Year"
+       # print(input$Month)
+         if(input$Month != "Total")
+         {
+           distMonth<-Month_to_number(input$Month)
+           distGroup<- "By Month"
+         }
+      }
+      else if (distGroup == "2021"){
+        distYear<-2021
+        distGroup<-"By Year"
+        if(input$Month != "Total")
+        {
+          distMonth<-Month_to_number(input$Month)
+          #distMonth<-19
+          distGroup<- "By Month"
+        }
+        }
+      ###
       #function(DataFrame, agegroup,place_d,group, m=0, y=0)
       dt=data_to_plot(df,distType_age,distType_placeofdeath,distGroup,distMonth,distYear)
-      #DataFrame, agegroup,place_d,group, m=0, y=0
+        #DataFrame, agegroup,place_d,group, m=0, y=0
         #randomVec <- rnorm(size, mean = as.numeric(input$mean), sd = as.numeric(input$sd))
         plot_usmap(data=dt, values = "pop_2015", color = "red") + 
-          scale_fill_continuous(name = "us corona deaths", low="lightpink",high="Red",label = scales::comma) + 
+          scale_fill_continuous(name = "us corona deaths per million ", low="lightpink",high="Red",label = scales::comma) + 
           theme(legend.position = "right")
-        
-    
-      
-      
       
     }
     
