@@ -177,6 +177,7 @@ Month_to_number<-function(m)
   else if(m=="October"){return(10)}
   else if(m=="November"){return(11)}
   else if(m=="December"){return(12)}
+  else if(m== "Total"){return(0)}
 }
 
 ################################################################################################################################################
