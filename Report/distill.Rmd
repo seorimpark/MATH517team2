@@ -30,6 +30,8 @@ knitr::opts_chunk$set(echo = TRUE)
 -purpose of study
 -assumptions and limitations
 -Review of preceding research and literature
+
+
 *Salima*  
 
 *Matias*  
@@ -74,9 +76,213 @@ library(usmap)
 
 ````
 
-## Deaths through time in the US
 
-*Zineb*  
+
+## Spatial exploration of Covid deaths in the United States over time:
+
+In this subsection, we intend to visualize our data before starting different analyses. 
+To do so, we display the number of deaths on the United States map shown in Figures 1, 2, 3 and 4. 
+The Plotted Data represent the deaths per 1 million individuals, we standardise the data according to the population of each state.
+
+
+````{r, include=FALSE}
+# data :
+
+df0<- read_csv("Data/Data_us_interactive_us_map.csv")
+df1<- df0[,-c(1,17)]
+# transforming the columns start date and end date to date format:
+df3<-df1
+df3$`Start Date`<- as.Date(df3$`Start Date`, format="%m/%d/%Y")
+df3
+df3$`End Date`<- as.Date(df3$`End Date`, format="%m/%d/%Y")
+df3
+#transform the other columns ( "Group","HHS Region","State","Place of Death" "Age group") into factors:
+df4<-df3
+#col_names <- colnames(df4[,4:10])
+#df4[col_names] <- lapply(df4[col_names] , factor)
+data_interactive<-df4
+data_interactive<-as.data.frame(data_interactive)
+
+
+us_popul<-statepop 
+````
+
+```{r,, include=FALSE}
+# functions I need: 
+Select_Age_Group<-function(DataFrame, agegroup)
+{ 
+  age_groups<-unique(DataFrame$`Age group`)
+  if(agegroup %in% age_groups)
+  {
+    df1= DataFrame %>% filter(`Age group` == agegroup )
+    df1<-as.data.frame(df1)
+    return(df1)
+  }
+  else{
+    warning("Age group selected not in the list, the returned dataframe has not been filtered")
+    return (DataFrame)
+  }
+}
+
+Select_Group<-function(DataFrame, group)
+{ 
+  all_groups<-unique(DataFrame$`Group`)
+  if(group %in% all_groups)
+  {
+    df1= DataFrame %>% filter(`Group` == group )
+    df1<-as.data.frame(df1)
+    return(df1)
+  }
+  else{
+    warning("Group selected not in the list, the returned dataframe has not been filtered")
+    return (DataFrame)
+  }
+}
+
+Select_HHSRegion<-function(DataFrame, region)
+{ 
+  all_regions<-unique(DataFrame$`HHS Region`)
+  if(region %in% all_regions)
+  {
+    df1= DataFrame %>% filter(`HHS Region` == region )
+    df1<-as.data.frame(df1)
+    return(df1)
+  }
+  else{
+    warning("HHS Region selected not in the list, the returned dataframe has not been filtered")
+    return (DataFrame)
+  }
+}
+
+
+Select_State<-function(DataFrame, state)
+{ 
+  all_states<-unique(DataFrame$State)
+  if(state %in% all_states)
+  {
+    df1= DataFrame %>% filter(`State` == state )
+    df1<-as.data.frame(df1)
+    return(df1)
+  }
+  else{
+    warning("State selected not in the list, the returned dataframe has not been filtered")
+    return (DataFrame)
+  }
+}
+
+
+Select_PlaceDeath<-function(DataFrame, place_d)
+{ 
+  all_places<-unique(DataFrame$`Place of Death`)
+  if(place_d %in% all_places)
+  {
+    df1= DataFrame %>% filter(`Place of Death` == place_d )
+    df1<-as.data.frame(df1)
+    
+    return(df1)
+  }
+  else{
+    warning("Place of death selected not in the list, the returned dataframe has not been filtered")
+    return (DataFrame)
+  }
+}
+
+Select_all<-function(DataFrame, agegroup,place_d,group, m, y)
+{
+  # I want to use %>% but not quite confortable, I ll use brute force first:
+  df1=Select_Age_Group(DataFrame,agegroup)
+  df2=Select_PlaceDeath(df1,place_d)
+  df3=df2 %>% filter(`Group` == group )
+  if(group=="By Total")
+  {return(as.data.frame(df3))}
+  else if(group=="By Year") 
+  {
+    df4=df3 %>% filter(`Year` == y )
+    return(as.data.frame(df4))
+  }
+  else if(group=="By Month")
+  {
+    df4=df3 %>% filter(`Year` == y )
+    df5=df4 %>% filter(`Month` == m )
+    return(as.data.frame(df5))
+  }
+  
+  
+}
+
+
+standardise_pop<-function(data)
+{
+  data[,2]=data[,2]*1000000/us_popul$pop_2015
+  data<-as.data.frame(data)
+  return(data)
+}
+
+
+data_to_plot<-function(DataFrame, agegroup,place_d,group, m, y){
+
+  df_to_plot<-Select_all(DataFrame, agegroup,place_d,group, m, y)
+  Death_by_state<-df_to_plot %>% 
+            group_by(State) %>% 
+            summarise(`COVID-19 Deaths`= sum(`COVID-19 Deaths`,na.rm=TRUE))
+  
+  Death_by_state<-Death_by_state[-c(34,41,47),]
+  Death_by_state<-standardise_pop(Death_by_state)
+  
+  Total_D<-Death_by_state$`COVID-19 Deaths`
+  us_TotalD<-as.data.frame(us_popul)
+  us_TotalD$pop_2015<-Total_D
+  us_TotalD<-us_TotalD[,-c(1,2)]
+  colnames(us_TotalD)[1]<-"state"
+  us_TotalD<-as.data.frame(us_TotalD)
+  return(us_TotalD)}
+```
+
+```{r, include=FALSE}
+# data plots
+dt1<-data_to_plot(data_interactive,"All Ages","Total - All Places of Death","By Month",7,2020)
+dt2<-data_to_plot(data_interactive,"All Ages","Total - All Places of Death","By Month",12,2020)
+dt3<-data_to_plot(data_interactive,"0-17 years","Total - All Places of Death","By Total",0,0)
+dt4<-data_to_plot(data_interactive,"85 years and over","Total - All Places of Death","By Total",0,0)
+        
+
+```
+
+```{r,include=FALSE}
+print(c(mean(dt1$pop_2015),mean(dt2$pop_2015),mean(dt3$pop_2015),mean(dt4$pop_2015)))
+```
+Figure (1) represents deaths of people regardless of their age as of July 2020. Figure (2) represents the deaths of people of all ages in July. 
+We notice the growth in the number of deaths: 300 out of 1 million people in Arizona at the peak in July with an average of 70.05 across the country. In December 2020, we note an increase in mortality to over 500 deaths per million inhabitants in Colorado and North Dakota, along with a countrywide average of 310.32. 
+
+Figure (3) shows the total number of deaths over the entire two-year period for individuals aged 0-17 years. The average number of deaths nationally is 0.62 per 1 million inhabitants with a maximum value of 3.07 in Arizona. Figure (4) shows the total number of deaths over the two years for persons over 85 years of age. The average death rate rises to 576.24 deaths per million population with a maximum of 1158.76 in Rhode Island and a minimum of 117.35 in Hawaii. The examples chosen in this section are rather extreme and are meant to better visualize the data and discover interesting trends or factors to analyze later in this project.
+
+```{r, echo=FALSE}
+plot_usmap(data=dt1, values = "pop_2015",labels = TRUE, color = "red") + 
+          scale_fill_continuous(name = "Corona deaths in the USA per million ", low="lightpink",high="Red",label = scales::comma) +labs(title = "  Figure (1): deaths per million in July 2020 for all age groups accross the United States.")+
+          theme(legend.position = "right")
+```
+
+                      
+```{r, echo=FALSE}
+par(mfrow=c(1,1))
+plot_usmap(data=dt2, values = "pop_2015",labels = TRUE, color = "red") + 
+          scale_fill_continuous(name = "Corona deaths in the USA per million ", low="lightpink",high="Red",label = scales::comma) +labs(title = "  Figure (2): deaths per million in December 2020 for all age groups accross the United States. ")+
+          theme(legend.position = "right" ) 
+```
+
+```{r, echo=FALSE}
+plot_usmap(data=dt3, values = "pop_2015",labels = TRUE, color = "red") + 
+          scale_fill_continuous(name = "Corona deaths in the USA per million ", low="lightpink",high="Red",label = scales::comma) + labs(title = "Figure (3): total deaths per million in 2020 and 2021 for individual aged between 0 and 17 years old accross the United States.")+
+          theme(legend.position = "right")
+```
+
+```{r, echo=FALSE}
+plot_usmap(data=dt4, values = "pop_2015",labels = TRUE, color = "red") + 
+          scale_fill_continuous(name = "Corona deaths in the USA per million ", low="lightpink",high="Red",label = scales::comma) + labs(title = "Figure (4): total deaths per million in 2020 and 2021 for individual aged 85+ years old accross the United States. ")+
+          theme(legend.position = "right")
+```
+        
+An interactive version is available under this [link](https://zinebag.shinyapps.io/InteractiveGeographicMapShiny/). You can select which map to display based on time period, age range and place of death.        
 
 ## Risk factors 
 
