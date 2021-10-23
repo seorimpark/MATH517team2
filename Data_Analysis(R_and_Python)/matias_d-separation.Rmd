@@ -11,6 +11,9 @@ library(readr)
 library(dplyr) 
 library(ggplot2)
 library(reshape)
+library(latex2exp)
+library(Rfast)
+set.seed(2)
 ```
 
 ## Loading the data
@@ -23,12 +26,10 @@ tot_population$Population<-as.numeric(gsub(" ", "", tot_population$Population)
 
 
 
-## Construct dictionary of neighboring states for each state
-source from: https://state.1keydata.com/bordering-states-list.php
-We assume that water borders and land borders have no difference
-
 ```{r}
-
+## Construct dictionary of neighboring states for each state
+#source from: https://state.1keydata.com/bordering-states-list.php
+#We assume that water borders and land borders have no difference
 neigh=list(
     "Alabama"=c('Florida', 'Georgia', 'Mississippi', 'Tennessee'),
     "Arizona"=c('California', 'Colorado', 'Nevada', 'New Mexico', 'Utah'),
@@ -51,7 +52,7 @@ neigh=list(
     "Massachusetts"=c('Connecticut', 'New Hampshire', 'New York', 'Rhode Island', 'Vermont'),
     "Michigan"=c('Illinois', 'Indiana', 'Minnesota', 'Ohio', 'Wisconsin'),
     "Minnesota"=c('Iowa', 'Michigan', 'North Dakota', 'South Dakota', 'Wisconsin'),
-    "Mississippi"=c('Alabama', 'Arkanssas', 'Louisiana', 'Tennessee'),
+    "Mississippi"=c('Alabama', 'Arkansas', 'Louisiana', 'Tennessee'),
     "Missouri"=c('Arkansas', 'Illinois', 'Iowa', 'Kansas', 'Kentucky', 'Nebraska', 'Oklahoma', 'Tennessee'),
     "Montana"=c('Idaho', 'North Dakota', 'South Dakota', 'Wyoming'),
     "Nebraska"=c('Colorado', 'Iowa', 'Kansas', 'Missouri', 'South Dakota', 'Wyoming'),
@@ -79,8 +80,6 @@ neigh=list(
     "Wisconsin"=c('Illinois', 'Iowa', 'Michigan', 'Minnesota'),
     "Wyoming"=c('Colorado', 'Idaho', 'Montana', 'Nebraska', 'South Dakota', 'Utah')
     )
-
-# Constructing an adjacency matrix
 ```
 
 
@@ -88,7 +87,7 @@ neigh=list(
 
 ```{r}
 
-states<-setdiff(unique(df$State),c("United States","New York City","District of Columbia", "Puerto Rico", "Alaska")  )
+states<-setdiff(unique(df$State),c("United States","New York City","District of Columbia", "Puerto Rico", "Alaska", "Hawaii")  )
 df.deaths <-  data.frame(rep(0,21))
 for(i in states) {
 
@@ -109,49 +108,139 @@ plot(as.Date(new.cases$`End Date`, "%m/%d/%Y"),new.cases$`COVID-19 Deaths`, 'h',
 
 colnames(df.deaths)<- c(states)
 
+
 ```
 
 
-# Predictions for Wyoming
+
+# Predicting individual states from their neighbours
 ```{r}
+for(i in states) {
+# Dataframe with neighbours of i
+df.neigh.i<-filter(df,Group=='By Month', is.element(State, unlist(neigh[i])),`Place of Death`=='Total - All Places of Death',`Age group`=='All Ages')
+
+# Concatenated vector with deaths of all neighbours of state i
+deaths_neigh_i<-df.neigh.i$`COVID-19 Deaths`
+
+
+# Concatenated vector with population of all neighbours of state i
+population_neigh_i<-rep(NA,nrow(df.neigh.i))
+for (k in 1:nrow(df.neigh.i)) {
+  population_neigh_i[k]<-tot_population[tot_population[,1]==state.abb[match(df.neigh.i$State[k],state.name)],2]
+}
+
+# Concatenated vector with normalized deaths of all neighbours of state i
+x<-deaths_neigh_i*100000/population_neigh_i
+
+
+# Concatenated vector in which normalized deaths in state i are repeated for each neighbour
+y<-rep(filter(df,Group=='By Month',State==i,`Place of Death`=='Total - All Places of Death',`Age group`=='All Ages')$`COVID-19 Deaths`, length(unlist(neigh[i])))*100000/tot_population[tot_population[,1]==state.abb[match(i,state.name)],2]
+
+# Linear prediction and plot
+fit<-lm(y ~ x)
+plot(x,y,'p',main=paste(i, ':', 'b0 =', toString(round(fit$coefficients[1],1)), ',', 'b1 =', toString(round(fit$coefficients[2],2))))
+     
+
+}
+```
+
+
+
+
+
+
+
+## Research questions:
+In this investigation, we set out to answer the following questions.
+1. How have the number of deaths due to COVID-19 in the United State evolved with time since the beginning of the pandemic?
+2. Next, we investigate how COVID-19 deaths are distributed across some notable risk factors. In particular, we ask deaths are distributed across age groups? How are deaths distributed across the recorded location of death (meaning type of institution or private residence)?
+3. How has the mortality of COVID-19 evolved with time?
+4. How are COVID-19 cases correlated across neighbouring states?
+5. Can we predict the number of deaths in a given state and given month from the number of deaths in the k-th degree neighbor of that state?
+
+
+
+
+### Predicting deaths from k-th degree neighbors
+In this section, we propose and implement a linear model to predict the number of monthly COVID-19 deaths in a given state as a function of the number of deaths during the same month in a k-th degree neighbor of that state. Two states X and Y are k-th degree neighbors if at least k interstate borders must be crossed to go from one state to the other. 
+
+$$
+E[N_X\mid N_Y] = b_0^{(k_{XY})}+ b_1^{(k_{XY})} N_Y
+$$
+
+For example, the above model can be used to predict the number of COVID-19 deaths in Massachusetts during a month given the number of deaths in Vermont during the same month, where Vermont and Massachusetts share a border and are thus 1st degree neighbors ($k=1$). The panel of figures below contains scatterplots of $N_X$ against $N_Y$ for any month and any two states that are neighbors of degree $d$. In order to find the degree of neighborship between two states, we have treated the states as nodes on a graph, where edges correspond to borders between states. We constructed an adjacency matrix between states sharing a border, and subsequently we used the Floyd–Warshall algorithm to find the smallest number of interstate borders connecting any two states. In each panel, we have indicated the parameters $b_0$, $b_1$ and the correlation coefficient $\rho$ between $N_X$ and $N_Y$. 
+
+```{r include=FALSE}
+# Constructing the adjacency matrix
+x <- matrix(NA, length(states), length(states))
 i<-'Wyoming'
-j<-'Alabama'
+j<-'Montana'
 
-# Predicting Wyoming for Alabama
-x<-df.deaths[,j]
-y<-df.deaths[,i]
-plot(x,y,'p',main=paste(i,j,sep = ', '))
-lm(y ~ x)
+for (i in states) {
+  for (j in states) {
+   if (is.element(j,unlist(neigh[i]))) {
+     x[match(i,states),match(j,states)]<- 1
+   }
+    #x[match(i,states),match(j,states)]<- as.numeric(is.element(j,unlist(neigh[i])))
+     #x[match(i,states),match(j,states)]<- 0
+  }
+}
 
-# Wyoming from all other states
-stacked<-stack(df.deaths)
-y1<-rep(stacked[stacked$ind==i,1],ncol(df.deaths)-1)
-x1<-stacked[stacked$ind!=i,1]
-plot(x1,y1,'p', main=i)
-
-lm(y1 ~ x1)
+# Distance matrix between states determined using the Floyd–Warshall algorithm
+distance<-floyd(x)
+rownames(distance)<-states
+colnames(distance)<-states
+```
 
 
+```{r, echo=FALSE}
+# Average prediction of state from its d-neighbours
+D<-9
+d.separated<-data.frame('d'=rep(NA,D),'b0'=rep(NA,D), 'b1'=rep(NA,D), 'rho'=rep(NA,D))
+
+for (d in 1:D) {
+  
+x<-c()
+y<-c()
+
+
+
+# Concatenate vectors of deaths for all pairs of states i,j separated by distance d
+for (i in 1:length(states)) {
+  for (j in i:length(states)) {
+    if (distance[i,j]==d) {
+      #print(c(states[i],states[j]))
+      r<-rbinom(1,1,0.5) # Randomly assign x and y coordinate from a given pair
+      x<-c(x,filter(df,Group=='By Month',State==states[r*i+(1-r)*j],`Place of Death`=='Total - All Places of Death',`Age group`=='All Ages')$`COVID-19 Deaths`*100000/tot_population[tot_population[,1]==state.abb[match(states[r*i+(1-r)*j],state.name)],2])
+      y<-c(y,filter(df,Group=='By Month',State==states[r*j+(1-r)*i],`Place of Death`=='Total - All Places of Death',`Age group`=='All Ages')$`COVID-19 Deaths`*100000/tot_population[tot_population[,1]==state.abb[match(states[r*j+(1-r)*i],state.name)],2])
+    }
+  }
+}
+
+fit<-lm(y ~ x)
+rho<-cor(x, y,  method = "pearson", use = "complete.obs")
+
+if (is.element(d,c(1,5,9))) {
+plot(x,y,'p',main=paste('d =',toString(d),',', 'b0 =', toString(round(fit$coefficients[1],1)), ',', 'b1 =', toString(round(fit$coefficients[2],2)), ',', 'rho =', toString(toString(round(rho,2)))),xlim=c(0,100),ylim = c(0,100), xlab='Deaths during a month', ylab='Deaths during a month')
+}
+
+
+d.separated[d,]<- c(d,fit$coefficients[1],fit$coefficients[2],rho)
+
+}
 
 ```
 
 
-
-
-```{r}
-# Predicting Wyoming from its neigbours
-cols<-match(unlist(neigh[i]),states) # Only stacking columns corresponding to neighbours
-stacked<-stack(df.deaths[,cols])
-y1<-rep(df.deaths[,i],length(cols))
-x1<-stacked[,1]
-plot(x1,y1,'p',main=i)
-lm(y1 ~ x1)
+Next, we have plotted how the parameters $b_0,b_1$ and $\rho$ vary as a function of degree of separation $d$ below:
+```{r, echo=FALSE}
+# Plotting prediction parameters as a function of degrees of separation
+plot(d.separated$d, d.separated$b1, 'p', main='Linear response', xlab = 'd', ylab='b1')
+plot(d.separated$d, d.separated$rho, 'p', main='Correlation', xlab = 'd', ylab='rho')
+plot(d.separated$d, d.separated$b0, 'p', main='Offset', xlab = 'd', ylab='b0')
 ```
 
-The cofficient for x1 is larger for neighbours of Wyoming compared to using all other states. This suggests that neighbours give a better prediction of the cases.
-
-
-
+As expected, the predictive power of a neighbor decreases with increasing degree of the neighbor. We see that the variation in the number of deaths is large, and thus it is (unsurprisingly) hard to make accurate predictions of the number of deaths. The speed of attenuation of response $b_1$ with $d$ nonetheless sheds light on the spatial scale of the correlations between the number of deaths.
 
 
 
