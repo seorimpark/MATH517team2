@@ -25,15 +25,20 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Introduction
-
+-statement of problem/circumstance
+-significance of problem
+-purpose of study
+-assumptions and limitations
+-Review of preceding research and literature
 *Salima*  
 
 *Matias*  
 
-*Zineb*  
+### Approaches:
+To answer the above questions, we will proceed as follows:
+A descriptive and visual approach where we will produce interactive plots with information on number of deaths along different dimensions: geographically, temporally, by different risk factors. We will then proceed with the analysis of mortality rate as a function of time and based on different risk factors. Afterwards we switch to the correlation and spatial comparison studies: between two selected states, two neighbouring states or considering different levels of neighbourhoods through a separation analysis.
 
-
-## Data
+## Sources of information/ datasets:
 
 In this project, several datasets were used to answer our questions. Each one of them refers to the same population (the US). Here are more specific descriptions. 
 
