@@ -36,15 +36,25 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Research questions:
 In this investigation, we set out to answer the following questions.
+
+
 1. How have the number of deaths due to COVID-19 in the United State evolved with time since the beginning of the pandemic?
+
+
 2. Next, we investigate how COVID-19 deaths are distributed across some notable risk factors. In particular, we ask deaths are distributed across age groups? How are deaths distributed across the recorded location of death (meaning type of institution or private residence)?
+
+
 3. How has the mortality of COVID-19 evolved with time?
+
+
 4. How are COVID-19 cases correlated across neighbouring states?
+
+
 5. Can we predict the number of deaths in a given state and given month from the number of deaths in the k-th degree neighbor of that state?
 
 ### Approaches:
 To answer the above questions, we will proceed as follows:
-A descriptive and visual approach where we will produce interactive plots with information on number of deaths along different dimensions: geographically, temporally, by different risk factors. We will then proceed with the analysis of mortality rate as a function of time and based on different risk factors. Afterwards we switch to the correlation and spatial comparison studies: between two selected states, two neighbouring states or considering different levels of neighbourhoods through a separation analysis.
+A descriptive and visual approach where we will produce interactive plots with information on number of deaths along different dimensions: geographically, temporally and by different risk factors. We will then proceed with the analysis of mortality rate as a function of time and based on different risk factors. Afterwards we switch to the correlation and spatial comparison studies: between two selected states, two neighbouring states or considering different levels of neighbourhoods through a separation analysis.
 
 ## Sources of information/ datasets:
 
@@ -90,8 +100,8 @@ library(Rfast)
 ## Spatial exploration of Covid deaths in the United States over time:
 
 In this subsection, we intend to visualize our data before starting different analyses. 
-To do so, we display the number of deaths on the United States map shown in Figures 1, 2, 3 and 4. 
-The Plotted Data represent the deaths per 1 million individuals, we standardise the data according to the population of each state.
+To do so, we display the number of deaths on the United States map shown in Figures (1), (2), (3) and (4). 
+The plotted data represents the deaths per 1 million individuals, we standardise the data according to the population of each state.
 
 
 ````{r, include=FALSE}
