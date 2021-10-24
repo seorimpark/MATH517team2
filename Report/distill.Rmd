@@ -60,11 +60,13 @@ A last thing we should take into account is that those numbers of deaths are not
 
 ### US deaths within categories and states
 
-*Seorim*  
+The second dataset we chose to use is about [COVID-19 cases and Deaths by State over time](https://data.cdc.gov/Case-Surveillance/United-States-COVID-19-Cases-and-Deaths-by-State-o/9mfq-cb36) from the CDC in the US. This dataset contains the total number, probable and confirmed cases and deaths from COVID-19 from each State from 22nd of January 2020 to 15th of October 2021. The variables we used are : `submission_date`, `state`, `new_cases` and `new_deaths`. We wanted to focus on the number of new cases per day to compare them between the States. The reason why we chose a different dataset from above is because tracing the number of cases is more sensitive in catching the global trend of spread than tracing the number of new deaths. Also, the above dataset only has the number per month, whereas this has for each day which makes the comparison more accurate and precise. 
 
-### Additional: US population, ...
+### Other datasets used
 
-*Seorim*  
+The third dataset we used is about [the U.S. population in 2019 by State (extract)](https://www.census.gov/data/datasets/time-series/demo/popest/2010s-national-total.html#par_textimage_1810472256) by the Census Bureau in the U.S.. This dataset is used to normalize the number of cases and deaths : since each state has a different size of population, we used the percentage of cases out of the total population of the state to compare the numbers from different States. We assumed that the population did not differ from 2019 with a confidence interval of 90% or above (The population of the States showed a global increase of less than 10% during 10 years)
+
+The fourth dataset is about the new cases and deaths per months. This dataset was extracted by the second dataset, by subtracting the total cases and deaths for each last days of consecutive months. This dataset was made to use in parallel with the first dataset, and compute the mortality rate. 
 
 ## Packages
 
@@ -405,9 +407,26 @@ Here we can clearly see that most people were inpatients in a healthcare setting
 
 ## Impact of geolocation on cases and deaths from COVID--19
 
-### Correlations depending of neighboorship
 
-*Seorim*
+### Correlations depending of neighbourship
+
+In this section, we want to validate the hypothesis that the location of the states have an impact on the number of cases and deaths from COVID-19. In order to prove it, we looked into the new number of cases and deaths from COVID-19 per day in each state, and compared between them to see if neighboring states had a more similar trend. 
+
+Below is the plot of two example states that are not neighboring from each other, New York and California: it is the percentage of new COVID-19 cases over the total state population in New York and California as a function of time. 
+
+\includegraphics[scale=0.5]{NY_CA.png}
+
+Below is the plot of two example states that are neighboring from each other, Nevada and California. We can observe that compared to the previous graph, the plots seem to look more alike. 
+
+\includegraphics[scale=0.5]{NV_CA.png}
+
+To check on different pairs of states, an interactive plot was made [(Link)](https://myplotseo.herokuapp.com). We can choose the pair with the two dropdowns at the top, and the states are named with its acronyms. Once the pair is chosen, the title will reveal if the two states are actually neighbours or not. 
+
+To verify this, we computed the Pearson correlation coefficient for each pair of States. By taking the mean of the coefficients for pairs that are neighbours and the ones for the pairs that are not neighbours, we could see a big difference (0.7575626038139122 v.s. 0.5900159155676525) We can therefore say that the trends of new COVID-19 cases are similar if the states are neighboring from each other. We could draw a similar conclusion for the number of deaths from COVID-19, although it is not as apparent as the number of cases. (0.4804464631622195 v.s. 0.34860163565334673)
+
+In conclusion, the location of the State indeed has an impact on the number of cases and deaths from COVID-19. We could observe that when two states have a more similar trend when they are neighbours than when they are not. The reason behind this phenomenon would be because people would often move from one state to another closer state. For instance, we could expect that a worker living in Nevada could go to California for work, and the disease might have spread along this movement of population. It is evident that if there a case outbreak happens, the disease would spread along this flow of population migrating around. 
+
+However, there can always be an exception. On one hand, there could be as many people moving in big cities far away than the ones moving to nearby cities, and in that case the trend might be similar even though the states are not neighboring to each other. On the other hand, we expect that this movement is not frequent with the government measures. 
 
 ### Predicting deaths from k-th degree neighbors
 In this section, we propose and implement a linear model to predict the number of monthly COVID-19 deaths in a given state as a function of the number of deaths during the same month in a k-th degree neighbor of that state. Two states X and Y are k-th degree neighbors if at least k interstate borders must be crossed to go from one state to the other. 
