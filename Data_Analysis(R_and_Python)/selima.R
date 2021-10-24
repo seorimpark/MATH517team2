@@ -75,7 +75,16 @@ ggplot(df_us, aes(df_us$end_date)) +
   geom_line(aes(y = df_us$mortality_10000, colour = "Mortality Rate")) +
   ggtitle("Comparaison of Mortality Rate and Cases Rate ")+
   xlab("Time (in months)") + ylab("Number of death/case for 10 000 indiduals")
-
+#2nd mortality :
+new_cases = df_us$new_cases_per_month
+cases = rep (0, length(new_cases))
+for (i in 1:length(new_cases)){
+  cases[i]= sum(new_cases[1:i])
+}
+df_us$cases = cases
+ratio = df_us$new_deaths_per_month/df_us$cases
+plot(df_us$end_date, ratio, type = "o", ylab ="Mortality rate ", xlab = "Time (in months)",main = "Ratio of the number of death and the new cases for 10 000 individuals per month")
+#doing the same thing for the new cases 
 #PLOT OF THE MORTALITY RATE AND NEW CASES THROUGH TIME FOR EACH STATE : 
 ggplot (df, aes ( x = df$end_date, y =df$new_deaths_per_month, colour = df$state ))+ geom_line()
 #as we can see : the  plot with the 49 states ( that we have ) is  burden 
