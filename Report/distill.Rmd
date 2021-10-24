@@ -417,12 +417,12 @@ Here we can clearly see that most people were inpatients in a healthcare setting
 
 To see how the mortality rate had evolve through time, we are going to compute the mortality rate for the hole US population and plot it through time. 
 
-## Loading the data 
+# Loading the data 
 ```{r, include = FALSE}
-df<-read_csv("/Users/selimajaoua/Documents/GitHub/MATH517team2/Data/case_per_month.csv")
+df<-read_csv("../Data/case_per_month.csv")
 ```
 
-##First part : 
+
 First, we are going to remove the columns of each regions and sum all the deaths to get the number of total death in the country by month : 
 
 ```{r, include = FALSE}
@@ -441,7 +441,7 @@ us_population_2021 = 333516610
 ```
 
 
-```{r, incluse= FALSE }
+```{r, include= FALSE }
 #let's check that the data is sorted : 
 is.unsorted(df_us$year) 
 population = c(rep(us_population_2020, nrow(df_us[df_us$year == 2020,])) , rep(us_population_2021, nrow(df_us[df_us$year==2021,])))
@@ -461,6 +461,7 @@ df_us$mortality_10000 = mortality_rate * 10000 #units of death for 10,000 indivi
 ```
 
 We are ready to plot the mortality rate through time : 
+
 ```{r, echo = FALSE}
 plot(df_us$end_date, df_us$mortality_10000, type = "o", ylab ="Mortality rate ", xlab = "Time (in months)",main = "Number of deaths for 10 000 individuals per month")
 ```
@@ -469,12 +470,12 @@ Now, let's compare the mortality rate to the incidence rate. The incidence rate 
 
 ```{r, echo = FALSE}
 cases_rate = df_us$new_cases_per_month /df_us$population
-cases_rate
 df_us$cases_10000 = cases_rate * 10000
 plot(df_us$end_date, df_us$cases_10000, type= "o", ylab = "Cases rate", xlab = "Time(in months) ",main = "Number of cases for 10 000 individuals per month")
 ```
 
 Let's plot both evolution at the same time to compare them 
+
 ```{r, echo = FALSE}
 ggplot(df_us, aes(df_us$end_date)) + 
   geom_line(aes(y = df_us$cases_10000, colour = "Cases Rate ")) + 
@@ -482,7 +483,7 @@ ggplot(df_us, aes(df_us$end_date)) +
   ggtitle("Comparaison of Mortality Rate and Cases Rate ")+
   xlab("Time (in months)") + ylab("Number of death/case for 10 000 indiduals")
 ```
-##Secondly
+
 
 Now, we are going to compute the proportion of deaths in the country. To do so, we suppose that the number of persons affected at a certain month are the sum of people affected before the month. 
 
