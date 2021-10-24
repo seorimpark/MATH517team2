@@ -22,6 +22,7 @@ body {text-align: justify}
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+options(knitr.duplicate.label = "allow")
 ```
 
 ## Introduction
@@ -32,7 +33,8 @@ knitr::opts_chunk$set(echo = TRUE)
 -Review of preceding research and literature
 
 
-*Salima*  
+
+This project aim to understand the spread of COVID-19 and why the pandemic has emerged as a global matter of concern in a couple months.At the time of the pandemic outbreak, a lack of informations implied awereness in the general public.We want to show the gravity of COVID-19. To do so, we focused our interest on the United States. 
 
 ### Research questions:
 In this investigation, we set out to answer the following questions.
@@ -126,7 +128,7 @@ data_interactive<-as.data.frame(data_interactive)
 us_popul<-statepop 
 ````
 
-```{r,, include=FALSE}
+```{r,include=FALSE}
 # functions I need: 
 Select_Age_Group<-function(DataFrame, agegroup)
 { 
@@ -413,9 +415,93 @@ Here we can clearly see that most people were inpatients in a healthcare setting
 
 ## Mortality rate through time 
 
-*Salima*
+To see how the mortality rate had evolve through time, we are going to compute the mortality rate for the hole US population and plot it through time. 
+
+## Loading the data 
+```{r, include = FALSE}
+df<-read_csv("/Users/selimajaoua/Documents/GitHub/MATH517team2/Data/case_per_month.csv")
+```
+
+##First part : 
+First, we are going to remove the columns of each regions and sum all the deaths to get the number of total death in the country by month : 
+
+```{r, include = FALSE}
+df = df[,-c(2)]
+df_us = df[,-c(4)] #delete state
+df_us = df_us %>%
+group_by(end_date, year, month) %>% summarise_at(vars(new_deaths_per_month,new_cases_per_month),sum) %>%
+ungroup()
+```
+
+So now, we have the number of new cases and new deaths for each month for the hole country. To compute the mortality rate, We are going to take the population of the country for each year. This means that we are going to neglect the fact that for each month the population changes ( so that we don't introduce a new data set) 
+
+```{r, include= FALSE}
+us_population_2020 = 331002651
+us_population_2021 = 333516610
+```
+
+
+```{r, incluse= FALSE }
+#let's check that the data is sorted : 
+is.unsorted(df_us$year) 
+population = c(rep(us_population_2020, nrow(df_us[df_us$year == 2020,])) , rep(us_population_2021, nrow(df_us[df_us$year==2021,])))
+df_us$population = population
+```
+
+
+Now that we have added the population of the states at each month, we are going to compute the mortality rate.
+```{r, include = FALSE}
+mortality_rate = df_us$new_deaths_per_month/df_us$population
+```
+
+Note that the mortality rate is generally expressend in " number of persons dead per 100,000 of the population, per period of time", in order to allow comparisons between different populations and time periods. So, we decided to represent the mortality rate per as the number of persons who died per 10,000 persons of the population.
+
+```{r, include = FALSE}
+df_us$mortality_10000 = mortality_rate * 10000 #units of death for 10,000 individuals
+```
+
+We are ready to plot the mortality rate through time : 
+```{r, echo = FALSE}
+plot(df_us$end_date, df_us$mortality_10000, type = "o", ylab ="Mortality rate ", xlab = "Time (in months)",main = "Number of deaths for 10 000 individuals per month")
+```
+
+Now, let's compare the mortality rate to the incidence rate. The incidence rate represent the number of persons affected by the COVID-19. 
+
+```{r, echo = FALSE}
+cases_rate = df_us$new_cases_per_month /df_us$population
+cases_rate
+df_us$cases_10000 = cases_rate * 10000
+plot(df_us$end_date, df_us$cases_10000, type= "o", ylab = "Cases rate", xlab = "Time(in months) ",main = "Number of cases for 10 000 individuals per month")
+```
+
+Let's plot both evolution at the same time to compare them 
+```{r, echo = FALSE}
+ggplot(df_us, aes(df_us$end_date)) + 
+  geom_line(aes(y = df_us$cases_10000, colour = "Cases Rate ")) + 
+  geom_line(aes(y = df_us$mortality_10000, colour = "Mortality Rate")) +
+  ggtitle("Comparaison of Mortality Rate and Cases Rate ")+
+  xlab("Time (in months)") + ylab("Number of death/case for 10 000 indiduals")
+```
+##Secondly
+
+Now, we are going to compute the proportion of deaths in the country. To do so, we suppose that the number of persons affected at a certain month are the sum of people affected before the month. 
+
+```{r, echo = FALSE}
+new_cases = df_us$new_cases_per_month
+cases = rep (0, length(new_cases))
+for (i in 1:length(new_cases)){
+  cases[i]= sum(new_cases[1:i-1])
+}
+cases[1]= 0
+df_us$cases = cases
+ratio = df_us$new_deaths_per_month/df_us$cases
+plot(df_us$end_date, ratio, type = "o", ylab ="Proportion of deaths ", xlab = "Time (in months)",main = "Ratio of the number of death and the new cases for 10 000 individuals per month")
+
+```
+
 
 ## Impact of geolocation on cases and deaths from COVID--19
+
 
 
 ### Correlations depending of neighbourship
@@ -449,6 +535,7 @@ In conclusion, the location of the State indeed has an impact on the number of c
 
 However, there can always be an exception. On one hand, there could be as many people moving in big cities far away than the ones moving to nearby cities, and in that case the trend might be similar even though the states are not neighboring to each other. On the other hand, we expect that this movement is not frequent with the government measures. 
 
+
 ### Predicting deaths from k-th degree neighbors
 In this section, we propose and implement a linear model to predict the number of monthly COVID-19 deaths in a given state as a function of the number of deaths during the same month in a k-th degree neighbor of that state. Two states X and Y are k-th degree neighbors if at least k interstate borders must be crossed to go from one state to the other. 
 
@@ -460,8 +547,8 @@ For example, the above model can be used to predict the number of COVID-19 death
 
 ```{r, echo=FALSE}
 df <- read_csv("Data/Provisional_COVID-19_Deaths_by_Place_of_Death_and_Age.csv")
-tot_population <- read.csv("Data/tot_population.csv")
-tot_population$Population<-as.numeric(gsub(" ", "", tot_population$Population)) # Converting numbers to numeric format
+tot_population <- read.csv("Data/tot_population_modified.csv")
+tot_population$Population<-as.numeric(tot_population$Population) # Converting numbers to numeric format
 ```
 
 
@@ -602,11 +689,11 @@ As expected, the predictive power of a neighbor decreases with increasing degree
 
 ## Conclusion 
 
-We have shown that the geolocation also has an impact on the number of cases, and that it is possible to predict the number of cases and deaths based on the numbers from the neighboring states. 
+*pending*
 
 ## Future improvements 
 
-A 
+*pending*
 
 
 
