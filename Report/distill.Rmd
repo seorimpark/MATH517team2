@@ -436,13 +436,13 @@ To verify this, we computed the Pearson correlation coefficient for each pair of
 
 Below is the box plots of Pearson correlation coefficients between the numbers of cases from two States when they are neighbours and when they are not.
 
-![Box Plot cases](boxplot1.png)
+![Box Plot cases](boxplot1.png){width=50%}
 
 We can indeed observe that the Pearson correlation coefficient is significantly higher when the two States are neighboring than when they are not. 
 
 Below is the box plots of Pearson correlation coefficients between the numbers of deaths from two States when they are neighbours and when they are not.
 
-![Box Plot deaths](boxplot2.png)
+![Box Plot deaths](boxplot2.png){width=50%}
 The contrast for the number of deaths is not a apparent as the number of cases, but we can still retrieve the result we expected.
 
 In conclusion, the location of the State indeed has an impact on the number of cases and deaths from COVID-19. We could observe that when two states have a more similar trend when they are neighbours than when they are not. The reason behind this phenomenon would be because people would often move from one state to another closer state. For instance, we could expect that a worker living in Nevada could go to California for work, and the disease might have spread along this movement of population. It is evident that if there a case outbreak happens, the disease would spread along this flow of population migrating around. 
@@ -602,11 +602,11 @@ As expected, the predictive power of a neighbor decreases with increasing degree
 
 ## Conclusion 
 
-*pending*
+We have shown that the geolocation also has an impact on the number of cases, and that it is possible to predict the number of cases and deaths based on the numbers from the neighboring states. 
 
 ## Future improvements 
 
-*pending*
+A 
 
 
 
