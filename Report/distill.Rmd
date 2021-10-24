@@ -434,6 +434,17 @@ To check on different pairs of states, an interactive plot was made [(Link)](htt
 
 To verify this, we computed the Pearson correlation coefficient for each pair of States. By taking the mean of the coefficients for pairs that are neighbours and the ones for the pairs that are not neighbours, we could see a big difference (0.7575626038139122 v.s. 0.5900159155676525) We can therefore say that the trends of new COVID-19 cases are similar if the states are neighboring from each other. We could draw a similar conclusion for the number of deaths from COVID-19, although it is not as apparent as the number of cases. (0.4804464631622195 v.s. 0.34860163565334673)
 
+Below is the box plots of Pearson correlation coefficients between the numbers of cases from two States when they are neighbours and when they are not.
+
+![Box Plot cases](boxplot1.png)
+
+We can indeed observe that the Pearson correlation coefficient is significantly higher when the two States are neighboring than when they are not. 
+
+Below is the box plots of Pearson correlation coefficients between the numbers of deaths from two States when they are neighbours and when they are not.
+
+![Box Plot deaths](boxplot2.png)
+The contrast for the number of deaths is not a apparent as the number of cases, but we can still retrieve the result we expected.
+
 In conclusion, the location of the State indeed has an impact on the number of cases and deaths from COVID-19. We could observe that when two states have a more similar trend when they are neighbours than when they are not. The reason behind this phenomenon would be because people would often move from one state to another closer state. For instance, we could expect that a worker living in Nevada could go to California for work, and the disease might have spread along this movement of population. It is evident that if there a case outbreak happens, the disease would spread along this flow of population migrating around. 
 
 However, there can always be an exception. On one hand, there could be as many people moving in big cities far away than the ones moving to nearby cities, and in that case the trend might be similar even though the states are not neighboring to each other. On the other hand, we expect that this movement is not frequent with the government measures. 
