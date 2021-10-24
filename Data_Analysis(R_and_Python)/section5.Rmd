@@ -1,0 +1,88 @@
+---
+title: "Section 5"
+author: "Salima Jaoua"
+date: "10/23/2021"
+output: html_document
+---
+
+ section 5 : How did the mortality rate evolve through time ?
+ 
+
+To see how the mortality rate had evolve through time, we are going to compute the mortality rate for the hole US population and plot it through time. 
+library(readr)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(UsingR)
+library(ggcorrplot)
+library(usmap)
+library (tidyverse)
+
+## Loading the data 
+df<-read_csv("/Users/selimajaoua/Documents/GitHub/MATH517team2/Data/case_per_month.csv")
+
+##First part : 
+First, we are going to remove the columns of each regions and sum all the deaths to get the number of total death in the country by month : 
+
+df_us = df[,-c(4)] #delete state
+ df_us = df_us %>%
+group_by(end_date, year, month) %>% summarise_at(vars(new_deaths_per_month,new_cases_per_month),sum) %>%
+ungroup()
+
+So now, we have the number of new cases and new deaths for each month for the hole country. To compute the mortality rate, We are going to take the population of the country for each year. This means that we are going to neglect the fact that for each month the population changes ( so that we don't introduce a new data set) 
+
+us_population_2020 = 331002651
+us_population_2021 = 333516610
+
+
+#let's check that the data is sorted : 
+is.unsorted(df_us$year) 
+population = c(rep(us_population_2020, nrow(df_us[df_us$year == 2020,])) , rep(us_population_2021, nrow(df_us[df_us$year==2021,])))
+population
+df_us$population = population
+
+Now that we have added the population of the states at each month, we are going to compute the mortality rate.
+mortality_rate = df_us$new_deaths_per_month/df_us$population
+
+Note that the mortality rate is generally expressend in " number of persons dead per 100,000 of the population, per period of time", in order to allow comparisons between different populations and time periods. So, we decided to represent the mortality rate per as the number of persons who died per 10,000 persons of the population.
+
+
+df_us$mortality_10000 = mortality_rate * 10000 #units of death for 10,000 individuals
+We are ready to plot the mortality rate through time : 
+
+plot(df_us$end_date, df_us$mortality_10000, type = "o", ylab ="Mortality rate ", xlab = "Time (in months)",main = "Number of deaths for 10 000 individuals per month")
+
+Now, let's compare the mortality rate to the incidence rate. The incidence rate represent the number of persons affected by the COVID-19. 
+
+
+cases_rate = df_us$new_cases_per_month /df_us$population
+cases_rate
+df_us$cases_10000 = cases_rate * 10000
+plot(df_us$end_date, df_us$cases_10000, type= "o", ylab = "Cases rate", xlab = "Time(in months) ",main = "Number of cases for 10 000 individuals per month")
+
+#plot both at the same time : 
+ggplot(df_us, aes(df_us$end_date)) + 
+  geom_line(aes(y = df_us$cases_10000, colour = "Cases Rate ")) + 
+  geom_line(aes(y = df_us$mortality_10000, colour = "Mortality Rate")) +
+  ggtitle("Comparaison of Mortality Rate and Cases Rate ")+
+  xlab("Time (in months)") + ylab("Number of death/case for 10 000 indiduals")
+  
+#Secondly
+
+Now, we are going to compute the proportion of deaths in the country. To do so, we suppose that the number of persons affected at a certain month are the sum of people affected before the month. 
+
+new_cases = df_us$new_cases_per_month
+cases = rep (0, length(new_cases))
+for (i in length(new_cases)){
+  cases_i = new_cases[1:i-1]
+  cases[i]= sum(cases_i)
+}
+cases[1:2]
+df_us$cases = cases
+ratio = df_us$new_deaths_per_month / df_us$cases
+df_us$ratio_10000 = ratio * 10000 #units of death for 10,000 individuals
+plot(df_us$end_date, df_us$ratio_10000, type = "o", ylab ="Mortality rate ", xlab = "Time (in months)",main = "Number of deaths for 10 000 individuals per month")
+
+
+
