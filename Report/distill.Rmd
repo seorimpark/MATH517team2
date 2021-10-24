@@ -13,7 +13,7 @@ author:
 - name: "Matias JANVIN"
   url: https://github.com/matiasjanvin
 - name: "Seorim PARK"
-  url: https://github.com/seorimparkk
+  url: https://github.com/seorimpark
 output: distill::distill_article
 ---
 <style>
@@ -424,11 +424,11 @@ In this section, we want to validate the hypothesis that the location of the sta
 
 Below is the plot of two example states that are not neighboring from each other, New York and California: it is the percentage of new COVID-19 cases over the total state population in New York and California as a function of time. 
 
-\includegraphics[scale=0.5]{NY_CA.png}
+![Plots CA NY](NY_CA.png)
 
 Below is the plot of two example states that are neighboring from each other, Nevada and California. We can observe that compared to the previous graph, the plots seem to look more alike. 
 
-\includegraphics[scale=0.5]{NV_CA.png}
+![Plots CA NV](NV_CA.png)
 
 To check on different pairs of states, an interactive plot was made [(Link)](https://myplotseo.herokuapp.com). We can choose the pair with the two dropdowns at the top, and the states are named with its acronyms. Once the pair is chosen, the title will reveal if the two states are actually neighbours or not. 
 
