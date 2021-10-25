@@ -415,15 +415,16 @@ Here we can clearly see that most people were inpatients in a healthcare setting
 
 ## Mortality rate through time 
 
-To see how the mortality rate had evolve through time, we are going to compute the mortality rate for the hole US population and plot it through time. 
+First we are going to plot the mortality rate and the incidence rate for the US through time to analyze their evolution. Secondly we are going to plot the proportion of deaths of COVID-19 called the case fatality ratio. This is important to measure the severity of COVID-19.
 
-# Loading the data 
+Let's load the data : 
+
 ```{r, include = FALSE}
 df<-read_csv("../Data/case_per_month.csv")
 ```
 
 
-First, we are going to remove the columns of each regions and sum all the deaths to get the number of total death in the country by month : 
+First, we are going to remove the column "States" and sum the new cases and respectively, the new deaths, for each month to get the number of total death in the country by month : 
 
 ```{r, include = FALSE}
 df = df[,-c(2)]
@@ -433,7 +434,7 @@ group_by(end_date, year, month) %>% summarise_at(vars(new_deaths_per_month,new_c
 ungroup()
 ```
 
-So now, we have the number of new cases and new deaths for each month for the hole country. To compute the mortality rate, We are going to take the population of the country for each year. This means that we are going to neglect the fact that for each month the population changes ( so that we don't introduce a new data set) 
+So now, we have the data for the US and not for each state. To compute the mortality rate, We are going to take the population of the country for each year. This means that we are going to neglect the fact that for each month the population changes ( so that we don't introduce a new data set) 
 
 ```{r, include= FALSE}
 us_population_2020 = 331002651
@@ -448,13 +449,19 @@ population = c(rep(us_population_2020, nrow(df_us[df_us$year == 2020,])) , rep(u
 df_us$population = population
 ```
 
+Now we can have a look to the data to check that our modifications worked : 
 
-Now that we have added the population of the states at each month, we are going to compute the mortality rate.
+```{r}
+df_us
+```
+
+
+Now that we have added the population of the country at each month, we are going to compute the mortality rate.
 ```{r, include = FALSE}
 mortality_rate = df_us$new_deaths_per_month/df_us$population
 ```
 
-Note that the mortality rate is generally expressend in " number of persons dead per 100,000 of the population, per period of time", in order to allow comparisons between different populations and time periods. So, we decided to represent the mortality rate per as the number of persons who died per 10,000 persons of the population.
+Note that the mortality rate is generally expressed by the  " number of persons dead per 100,000 of the population, per period of time", in order to allow comparisons between different populations and time periods. So, we decided to represent the mortality rate per as the number of persons who died per 10,000 persons of the population.
 
 ```{r, include = FALSE}
 df_us$mortality_10000 = mortality_rate * 10000 #units of death for 10,000 individuals
@@ -463,17 +470,26 @@ df_us$mortality_10000 = mortality_rate * 10000 #units of death for 10,000 indivi
 We are ready to plot the mortality rate through time : 
 
 ```{r, echo = FALSE}
-plot(df_us$end_date, df_us$mortality_10000, type = "o", ylab ="Mortality rate ", xlab = "Time (in months)",main = "Figure (7):Number of deaths for 10 000 individuals per month")
+ggplot(df_us, aes(df_us$end_date)) + 
+  geom_line(aes(y = df_us$mortality_10000)) +
+  ggtitle("Figure (7): Number of deaths for 10 000 individuals per month ")+
+  xlab("Time (in months)") + ylab("Mortality rate")
+
 ```
 
+First, with the emergence of the covid, we can see that the mortality rate increases quickly. 
+We can note that in the beginning of 2021, there is a peak of the mortality rate which can coincide with hospital saturation. Afterwards, in june, july 2021, the rate is low. This can be explained by the weather. 
 Now, let's compare the mortality rate to the incidence rate. The incidence rate represent the number of persons affected by the COVID-19. 
 
 ```{r, echo = FALSE}
 cases_rate = df_us$new_cases_per_month /df_us$population
 df_us$cases_10000 = cases_rate * 10000
-plot(df_us$end_date, df_us$cases_10000, type= "o", ylab = "Cases rate", xlab = "Time(in months) ",main = "Figure (8): Number of cases for 10 000 individuals per month")
+ggplot(df_us, aes(df_us$end_date)) + 
+  geom_line(aes(y = df_us$cases_10000))+
+  ggtitle("Figure (8): number of cases for 10 000 individuals per month ")+
+  xlab("Time (in months)") + ylab("Cases rate")
 ```
-
+We can notice that the evolution of the incidence rate is similar to the evolution of the mortality rate. The peak at the beginning of the year 2021 is also present here. It seems coherent since the incidence rate is correlated to the number of deaths.
 Let's plot both evolution at the same time to compare them 
 
 ```{r, echo = FALSE}
@@ -483,23 +499,20 @@ ggplot(df_us, aes(df_us$end_date)) +
   ggtitle("Figure (9): Comparaison of Mortality Rate and Cases Rate ")+
   xlab("Time (in months)") + ylab("Number of death/case for 10 000 indiduals")
 ```
-
-
-Now, we are going to compute the proportion of deaths in the country. To do so, we suppose that the number of persons affected at a certain month are the sum of people affected before the month. 
+We can see that when we plot both the mortality rate is very small compared to the incidence rate which is normal. This shows that the COVID-19 has spread quickly during this two years having a lot more cases than deaths. 
+Now, we are going to compute the proportion of deaths in the country. The problem is that we don't know when a persons who died at a certain month had the COVID-19. There are no links between the data. So we are going to take an approximation of the proportion of deaths per month. 
 
 ```{r, echo = FALSE}
-new_cases = df_us$new_cases_per_month
-cases = rep (0, length(new_cases))
-for (i in 1:length(new_cases)){
-  cases[i]= sum(new_cases[1:i-1])
-}
-cases[1]= 0
-df_us$cases = cases
-ratio = df_us$new_deaths_per_month/df_us$cases
-plot(df_us$end_date, ratio, type = "o", ylab ="Proportion of deaths ", xlab = "Time (in months)",main = "Figure (10): Ratio of the number of death and the new cases for 10 000 individuals per month")
 
+ratio = (df_us$new_deaths_per_month/df_us$new_cases_per_month)*100 #we multiply by 100 to have a percentage 
+ggplot(df_us, aes(df_us$end_date)) + 
+  geom_line(aes(y = ratio)) + 
+  ggtitle("Figure (10): Evolution of the porportion of deaths ")+
+  xlab("Time (in months)") + ylab("Case fatality ratio")
 ```
 
+
+Finally, we can see that at the beginning of the spread, COVID-19 was a very mortal deases. The peak reaches 27% : this mean that at a given time (february) more than one in four people dies of covid. After this peak, we can see that the proportion of deaths is more or less constant. This shows that the peak present in the mortality rate is explained by the high number of confirmed cases. 
 
 ## Impact of geolocation on cases and deaths from COVID--19
 
