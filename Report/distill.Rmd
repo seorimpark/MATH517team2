@@ -713,9 +713,10 @@ As expected, the predictive power of a neighbour decreases with increasing degre
 
 ## Future improvements 
 
-- Forecasting model on the map
-- Add more factors: sanitary restrictions, places avaiable in Hospitals
-- Reproduce and expand the study to different countries and maps
-- Vaccination and mortality by vaccines/ effects
-- Use data that includes comorbidity 
+As a further improvement and extension of the research, we suggest incorporating a forecasting model and visually displaying it in the same manner.
+We can also extend the following study and add more parameters such as health restrictions imposed by the government and their impact on the spread and deaths.
+We can further add the availability of hospitals as a parameter. 
+With interesting and conclusive results, we can broaden our study to other countries or even other epidemics.
+Furthermore, another dimension to consider would be the vaccination: does it have a positive or negative effect on mortality?
+Finally, comorbidity can be considered. 
 
