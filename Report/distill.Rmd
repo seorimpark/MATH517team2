@@ -704,9 +704,9 @@ As expected, the predictive power of a neighbour decreases with increasing degre
 ## Conclusion 
 
 - Summary of what we done: (we aimed to characterise the extend of Covid deaths in the US depending on multiple factors)
-- Dynamic heatmap: we notice a wave of increasing deaths from the south to the north of the US between may and December 2020 : US map plots(develop more)
+- Dynamic heatmap: we notice a wave of increasing deaths from the south to the north of the US between July (307 deaths/million in Arizona,~253 deaths/million in Texas, ~245 deaths/million in Florida VS North Dakota  ~40 deaths/million,Wisconsin  28deaths/million , Maine  18deaths/million) and December 2020(441 deaths/million in Arizona,~275 deaths/million in Texas, ~155 deaths/million in Florida VS North Dakota  ~461 deaths/million,Wisconsin 306 deaths/million , Maine  153 deaths/million)  : US map plots(develop more)
 - As expected, elderly die more (add more descriptions, ratio and numbers)
-- Substantial increase of Mortality maybe because of shortage of spot in hospitals (look for newspaper or article that supports)
+- Substantial increase of Mortality maybe because of shortage of spot in hospitals (look for newspaper or article that supports) : Many Hospitals With No Beds Left Are Forced To Send COVID Patients To Cities Far Away(https://www.npr.org/2021/08/19/1029378744/hospital-beds-shortage-covid-coronavirus-states?t=1635160291866)
 -correlation between neighbouring states in both incidence and deaths
 - Constructed a linear prediction model of the number of deaths given in a k-th degree neighbour. As expected, the predictive power decreases with the increasing degree of separation.The predictions are most accurance in case with lower of deaths(which makes sense, cases qwth high deaths are more rare, less easier to control )
 - Overall the ...
