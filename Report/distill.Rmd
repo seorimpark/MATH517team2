@@ -523,14 +523,14 @@ Finally, we can see that at the beginning of the spread, COVID--19 was a very mo
 
 In this section, we want to validate the hypothesis that the location of the states have an impact on the number of cases and deaths from COVID--19. In order to prove it, we looked into the new number of cases and deaths from COVID--19 per day in each state, and compared between them to see if neighbouring states had a more similar trend. 
 
-Below is the plot of two example states that are not neighbouring from each other, New York and California: the percentages of new COVID--19 cases over the total state population in New York and California are plotted as a function of time. 
+Below are the plots of two example states that are not neighbouring from each other, New York and California: the percentages of new COVID--19 cases over the total state population in New York and California are plotted as a function of time. 
 
 ![Plots CA NY](NY_CA.png)
 
 Figure(11)
 
 
-Below is the plot of two example states that are neighbouring from each other, Nevada and California. We can observe that compared to the previous graph, the plots seem to look more alike. 
+Below are the plots of two example states that are neighbouring from each other, Nevada and California. We can observe that compared to the previous graph, the plots seem to look more alike. 
 
 ![Plots CA NV](NV_CA.png)
 
@@ -541,7 +541,7 @@ To check on different pairs of states, an interactive plot was made [(Link)](htt
 
 To verify the hypothesis, we computed the Pearson correlation coefficient for each pair of States. By taking the mean of the coefficients for pairs that are neighbours and the ones for the pairs that are not neighbours, we could see a big difference (0.7575626038139122 v.s. 0.5900159155676525) We can therefore say that the trends of new COVID--19 cases are similar if the states are neighbouring from each other. We could draw a similar conclusion for the number of deaths from COVID--19, although it is not as apparent as the number of cases. (0.4804464631622195 v.s. 0.34860163565334673)
 
-Below is the box plots of Pearson correlation coefficients between the numbers of cases from two States when they are neighbours and when they are not.
+Below are the box plots of Pearson correlation coefficients between the numbers of cases from two States when they are neighbours and when they are not.
 
 ![Box Plot cases](boxplot1.png){width=70%}
 
@@ -550,7 +550,7 @@ Figure(13)
 
 We can indeed observe that the Pearson correlation coefficient is significantly higher when the two States are neighbouring than when they are not. 
 
-Below is the box plots of Pearson correlation coefficients between the numbers of deaths from two States when they are neighbours and when they are not.
+Below are the box plots of Pearson correlation coefficients between the numbers of deaths from two States when they are neighbours and when they are not.
 
 ![Box Plot deaths](boxplot2.png){width=70%}
 
