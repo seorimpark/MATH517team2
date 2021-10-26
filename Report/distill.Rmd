@@ -26,15 +26,9 @@ options(knitr.duplicate.label = "allow")
 ```
 
 ## Introduction
--statement of problem/circumstance
--significance of problem
--purpose of study
--assumptions and limitations
--Review of preceding research and literature
 
-
-
-This project aim is to understand the spread of COVID--19 and the reasons why the pandemic has emerged as a global matter of concern in a couple of months. Now that we have enough data to analyze what happened in this last two years, we want to show the gravity of COVID--19. To do so, we focused our interest on the United States.  
+This project aims to understand the spread of COVID–19 and the reasons why the pandemic has emerged as a global matter of concern in a couple of months. At the time of the pandemic outbreak, a lack of information implied awareness in the general public. By focusing on United States, we want to show the gravity of COVID–19 and analyze different periods and turning points in the pandemic management in the US. To do so, we will focus our interest on the virus transmission, number of patients and deaths during the beginning of the pandemic and until the end of the year 2021 and study its evolution with time. We will compare the situation in the different states of the US and try to find out if the evolution of the health situation in a state is predictable.
+One of the limitation of this study is that at the beginning of the pandemic there was not valid test for covid and then tests for COVID--19 were not as widely used by health professionals as now.
 
 ### Research questions
 In this investigation, we set out to answer the following questions.
